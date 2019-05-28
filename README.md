@@ -104,7 +104,8 @@ The final section that will be added to the pom at this point in the evolution o
 ```
 
 ### Create Application.java
-Our project still has no classes defined, so we are going to add a class that will serve as the entry point to the application. [Application.java] (src/main/java/com/kyleburnsdev/Application.java) is created in the folder structure under the java src directory and a subfolder structure to match the namespacing of the class. Documentation on the SpringApplication annotation and classes decorated with it can be found in the official [Spring Documentation] (https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-spring-application.html). The full path to the file is `src/main/java/com/kyleburnsdev/Application.java`.
+
+Our project still has no classes defined, so we are going to add a class that will serve as the entry point to the application. Application.java is created in the folder structure under the java src directory and a subfolder structure to match the namespacing of the class. Documentation on the SpringApplication annotation and classes decorated with it can be found in the official [Spring Documentation] (https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-spring-application.html). The full path to the file is `src/main/java/com/kyleburnsdev/Application.java`.
 
 A couple of important things to note at this point:
 
@@ -121,3 +122,43 @@ java -jar target/app.jar
 ```
 
 The output will include a Spring Boot banner and if it reports success you will be able to navigate to http://localhost:8080 where you will see a page marked "Whitelabel Error Page"
+
+## A word about health monitoring
+
+Before we actually add the first controller, it's probably a good time to talk about how developers can think ahead and save themselves and others from future frustration. We almost have the minimum amount of code in place to demonstrate a successful response from a web service. With just a little bit of effort, we can create a situation where we are able to validate that the web server and our application code run in a way that can later have automation put around it to prove "is the web service itself up".
+
+Regardless of the technology stack, I like to start my projects with a health monitoring endpoint. Health monitoring has been a requirement for applications that I have supported over my career and it is always much smoother to set up monitoring when the application development team has provided an endpoint specifically intended for that purpose. I will typically create two endpoints - 1 for the most basic operation of the service being able to respond to HTTP requests and one to validate that external dependencies of the application can be reached by the application. If we build the first of our monitoring endpoints as the first endpoint in the application, it provides us as developers with the advantage of being able to easily determine whether we have broken the core functionality of the framework. As we progressively add functionality, we can always go back to ensure that the health monitoring endpoint still works.
+
+## Adding the first controller
+
+The next step in the evolution of the application is to enable it to do something other than serve up 404 responses. To accomplish this, add a new Java source file called `src/main/java/com/kyleburnsdev/HealthController.java`. At this point, the class is pretty simple:
+
+```java
+package com.kyleburnsdev;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+@RequestMapping(path="/health")
+public class HealthController {
+    @GetMapping
+    public @ResponseBody String checkHealth() {
+        return "Application is running";
+    }
+}
+```
+
+Important things to note about the class include:
+
+- The `@Controller` annotation on the class tells Spring that this is a Controller expected to respond to HTTP requests
+- The  `@RequestMapping` annotation on the class provides the default URL prefix for all of the operations served by this controller
+- The `@GetMapping` annotation on the `checkHealth` method tells Spring that the method should be executed when requests to `/health` are made using the GET HTTP verb
+- The `@ResponseBody` annotation on the return type of `checkHealth` tells Spring to map the string returned by the method into an HTTP response to be returned to the requestor
+
+After adding the class, rebuild the application and go to http://localhost:8080/health. You should see "Application is running" displayed in the browser.
+
+```bash
+mvn clean package
+java -jar target/app.jar
+```
