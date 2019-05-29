@@ -11,7 +11,7 @@ steps:
   inputs:
     azureSubscription: $(azureSubscription)
     action: "Create Or Update Resource Group"
-    resourceGroupName: $resourceGroupName
+    resourceGroupName: $(resourceGroupName)
     location: $(location)
     templateLocation: 'Linked Artifact'
     csmFile: 'src/main/az/azuredeploy.json'
