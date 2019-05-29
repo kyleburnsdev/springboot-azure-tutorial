@@ -6,7 +6,7 @@ parameters:
 
 steps:
 - script: echo "$(baseAppName)-rg"
-- task: AzureResourceGroupDeployment@
+- task: AzureResourceGroupDeployment@2
   inputs:
     azureSubscription: $(azureSubscription)
     action: "Create Or Update Resource Group"
