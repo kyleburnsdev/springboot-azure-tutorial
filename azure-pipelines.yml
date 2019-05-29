@@ -67,24 +67,10 @@ stages:
         csmParametersFile: 'src/main/az/parameters.json'
         overrideParameters: '-baseName $(baseAppName)'
 
-#  - deployment: DeployLinuxWebApp
-#    displayName: Deploy Linux Web App
-#    environment: 'development'
-#    pool: 
-#      vmImage: $(vmImageName)
-#    strategy:
-#      runOnce:
-#        deploy:
-#          steps:
-#          - task: DownloadPipelineArtifact@1
-#            displayName: 'Download Pipeline Artifact'
-#            inputs:
-#              buildType: 'current'
-#
-#          - task: AzureWebApp@1
-#            displayName: 'Azure Web App Deploy: kyburns-throw-away-web'
-#            inputs:
-#              azureSubscription: $(azureSubscription)
-#              appType: webAppLinux
-#              appName: $(webAppName)
-#              package: '$(System.ArtifactsDirectory)/drop/**/target/app.jar'
+    - task: AzureWebApp@1
+      displayName: 'Deploy Website'
+      inputs:
+        azureSubscription: $(azureSubscription)
+        appType: webAppLinux
+        appName: $(webAppName)
+        package: '$(System.ArtifactsDirectory)/drop/**/target/app.jar'
