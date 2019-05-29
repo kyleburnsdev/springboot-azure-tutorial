@@ -10,7 +10,9 @@ variables:
   azureSubscription: 'DemoSubscription'
   
   # Web app name
-  webAppName: 'kyburns-throw-away-web'
+  baseAppName: 'kyburns-throw-away-web'
+  webAppName: $[format("{0}-web", baseAppName)]
+  resourceGroupName: $[format("{0}-rg", baseAppName)]
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
@@ -53,10 +55,16 @@ stages:
       vmImage: $(vmImageName)
 
     steps:
-    - template: pipeline-templates/deploy-environment.yml
-      parameters:
-        baseAppName: '$(webAppName)-dev'
-        resourceGroupName: '$(webAppName)-dev-rg'
+    - task: AzureResourceGroupDeployment@2
+      inputs:
+        azureSubscription: $(azureSubscription)
+        action: "Create Or Update Resource Group"
+        resourceGroupName: $(resourceGroupName)
+        location: $(location)
+        templateLocation: 'Linked Artifact'
+        csmFile: 'src/main/az/azuredeploy.json'
+        csmParametersFile: 'src/main/az/azuredeploy.json'
+        overrideParameters: '-baseName $(baseAppName)'
 
 #  - deployment: DeployLinuxWebApp
 #    displayName: Deploy Linux Web App
