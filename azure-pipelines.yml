@@ -11,8 +11,8 @@ variables:
   
   # Web app name
   baseAppName: 'kyburns-throw-away-web'
-  webAppName: $[format("{0}-web", baseAppName)]
-  resourceGroupName: $[format("{0}-rg", baseAppName)]
+  webAppName: $[format('{0}-web', variables['baseAppName'])]
+  resourceGroupName: $[format('{0}-rg', variables['baseAppName'])]
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
