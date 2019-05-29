@@ -62,7 +62,7 @@ stages:
         action: "Create Or Update Resource Group"
         resourceGroupName: $(resourceGroupName)
         location: $(location)
-        templateLocation: 'Linked Artifact'
+        templateLocation: 'Linked artifact'
         csmFile: 'src/main/az/azuredeploy.json'
         csmParametersFile: 'src/main/az/azuredeploy.json'
         overrideParameters: '-baseName $(baseAppName)'
