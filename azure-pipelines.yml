@@ -7,9 +7,7 @@ trigger:
 - master
 
 variables:
-
-  # Azure Resource Manager connection created during pipeline creation
-  azureSubscription: 'a6a9fab4-878a-457d-a278-a30bd5f1e127'
+  azureSubscription: 'DemoSubscription'
   
   # Web app name
   webAppName: 'kyburns-throw-away-web'
