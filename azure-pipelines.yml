@@ -64,7 +64,7 @@ stages:
         location: $(location)
         templateLocation: 'Linked artifact'
         csmFile: 'src/main/az/azuredeploy.json'
-        csmParametersFile: 'src/main/az/azuredeploy.json'
+        csmParametersFile: 'src/main/az/parameters.json'
         overrideParameters: '-baseName $(baseAppName)'
 
 #  - deployment: DeployLinuxWebApp
