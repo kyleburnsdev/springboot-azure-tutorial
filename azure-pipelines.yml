@@ -9,10 +9,11 @@ trigger:
 variables:
   azureSubscription: 'DemoSubscription'
   
-  # Web app name
+  # Resource Provisioning
   baseAppName: 'kyburns-throw-away-web'
   webAppName: $[format('{0}-web', variables['baseAppName'])]
   resourceGroupName: $[format('{0}-rg', variables['baseAppName'])]
+  location: 'eastus'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
