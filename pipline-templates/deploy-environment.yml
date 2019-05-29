@@ -1,0 +1,10 @@
+parameters:
+  name: ''
+  baseAppName: ''
+  location: 'eastus'
+
+variables:
+  resourceGroupName: ''
+
+steps:
+- script: echo $(baseAppName)-rg

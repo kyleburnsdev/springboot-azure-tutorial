@@ -47,26 +47,36 @@ stages:
 - stage: Deploy
   displayName: Deploy stage
   dependsOn: Build
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master-ignore'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   jobs:
-  - deployment: DeployLinuxWebApp
-    displayName: Deploy Linux Web App
-    environment: 'development'
-    pool: 
+  - job: DeployDevEnvironment
+    displayName: Deploy to Dev
+    pool:
       vmImage: $(vmImageName)
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: DownloadPipelineArtifact@1
-            displayName: 'Download Pipeline Artifact'
-            inputs:
-              buildType: 'current'
 
-          - task: AzureWebApp@1
-            displayName: 'Azure Web App Deploy: kyburns-throw-away-web'
-            inputs:
-              azureSubscription: $(azureSubscription)
-              appType: webAppLinux
-              appName: $(webAppName)
-              package: '$(System.ArtifactsDirectory)/drop/**/target/*.?(war|jar)'
+    steps:
+    - template: pipeline-templates/deploy-environment.yml
+      parameters:
+        baseAppName: $(webAppName)-dev
+
+#  - deployment: DeployLinuxWebApp
+#    displayName: Deploy Linux Web App
+#    environment: 'development'
+#    pool: 
+#      vmImage: $(vmImageName)
+#    strategy:
+#      runOnce:
+#        deploy:
+#          steps:
+#          - task: DownloadPipelineArtifact@1
+#            displayName: 'Download Pipeline Artifact'
+#            inputs:
+#              buildType: 'current'
+#
+#          - task: AzureWebApp@1
+#            displayName: 'Azure Web App Deploy: kyburns-throw-away-web'
+#            inputs:
+#              azureSubscription: $(azureSubscription)
+#              appType: webAppLinux
+#              appName: $(webAppName)
+#              package: '$(System.ArtifactsDirectory)/drop/**/target/app.jar'
