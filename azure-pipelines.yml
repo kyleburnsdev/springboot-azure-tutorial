@@ -10,7 +10,7 @@ variables:
   azureSubscription: 'DemoSubscription'
   
   # Resource Provisioning
-  baseAppName: 'kyburns-throw-away-web'
+  baseAppName: 'kyburns-throw-away'
   webAppName: $[format('{0}-web', variables['baseAppName'])]
   resourceGroupName: $[format('{0}-rg', variables['baseAppName'])]
   location: 'eastus'
