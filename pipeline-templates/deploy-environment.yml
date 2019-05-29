@@ -6,12 +6,12 @@ parameters:
   location: 'eastus'
 
 steps:
-- script: echo "$(baseAppName)-rg"
+- script: echo "$baseAppName-rg"
 - task: AzureResourceGroupDeployment@2
   inputs:
     azureSubscription: $(azureSubscription)
     action: "Create Or Update Resource Group"
-    resourceGroupName: "$(azureSubscription)-$(environment)-rg"
+    resourceGroupName: $(format('{0}-{1}-rg', baseAppName, environment))
     location: $(location)
     templateLocation: 'Linked Artifact'
     csmFile: 'src/main/az/azuredeploy.json'
