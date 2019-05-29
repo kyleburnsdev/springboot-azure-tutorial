@@ -73,4 +73,4 @@ stages:
         azureSubscription: $(azureSubscription)
         appType: webAppLinux
         appName: $(webAppName)
-        package: '$(System.ArtifactsDirectory)/drop/**/target/app.jar'
+        package: '$(System.ArtifactsDirectory)/app.jar'
