@@ -2,7 +2,7 @@ parameters:
   name: ''
   azureSubscription: 'DemoSubscription'
   baseAppName: ''
-  environment: 'dev'
+  resourceGroupName: ''
   location: 'eastus'
 
 steps:
@@ -11,9 +11,9 @@ steps:
   inputs:
     azureSubscription: $(azureSubscription)
     action: "Create Or Update Resource Group"
-    resourceGroupName: $[format('{0}-{1}-rg', baseAppName, environment)]
+    resourceGroupName: $resourceGroupName
     location: $(location)
     templateLocation: 'Linked Artifact'
     csmFile: 'src/main/az/azuredeploy.json'
     csmParametersFile: 'src/main/az/azuredeploy.json'
-    overrideParameters: '-baseName $[baseAppName]-$[environment]'
+    overrideParameters: '-baseName $(baseAppName)'

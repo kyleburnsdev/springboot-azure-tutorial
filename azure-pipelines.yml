@@ -55,7 +55,8 @@ stages:
     steps:
     - template: pipeline-templates/deploy-environment.yml
       parameters:
-        baseAppName: $(webAppName)-dev
+        baseAppName: '$(webAppName)-dev'
+        resourceGroupName: '$(webAppName)-dev-rg'
 
 #  - deployment: DeployLinuxWebApp
 #    displayName: Deploy Linux Web App
