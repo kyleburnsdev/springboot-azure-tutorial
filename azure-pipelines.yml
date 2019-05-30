@@ -36,8 +36,8 @@ stages:
     - task: CopyFiles@2
       displayName: 'Copy build output to artifact staging directory'
       inputs:
-        SourceFolder: '$(System.DefaultWorkingDirectory)'
-        Contents: '**/target/app.jar'
+        SourceFolder: '$(System.DefaultWorkingDirectory)/target'
+        Contents: 'app.jar'
         TargetFolder: '$(Build.ArtifactStagingDirectory)/app'
 
     - task: CopyFiles@2
@@ -89,4 +89,4 @@ stages:
         azureSubscription: $(azureSubscription)
         appType: webAppLinux
         appName: $(webAppName)
-        package: '$(System.DefaultWorkingDirectory)/target/app/app.jar'
+        package: '$(System.DefaultWorkingDirectory)/app/app.jar'
