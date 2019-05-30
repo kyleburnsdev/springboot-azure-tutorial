@@ -74,9 +74,9 @@ stages:
 
     - script: ls -aR
 
-    - script: |
-        cd $(System.DefaultWorkingDirectory)
-        ls -aR
+    # - script: |
+    #     cd $(System.DefaultWorkingDirectory)
+    #     ls -aR
 
     - task: AzureWebApp@1
       displayName: 'Deploy Website'
@@ -84,4 +84,4 @@ stages:
         azureSubscription: $(azureSubscription)
         appType: webAppLinux
         appName: $(webAppName)
-        package: '$(System.ArtifactsDirectory)/app.jar'
+        package: '$(System.DefaultWorkingDirectory)/target/app.jar'
