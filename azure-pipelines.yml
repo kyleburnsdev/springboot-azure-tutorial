@@ -34,11 +34,18 @@ stages:
         mavenPomFile: 'pom.xml'
 
     - task: CopyFiles@2
-      displayName: 'Copy Files to artifact staging directory'
+      displayName: 'Copy build output to artifact staging directory'
       inputs:
         SourceFolder: '$(System.DefaultWorkingDirectory)'
         Contents: '**/target/app.jar'
-        TargetFolder: $(Build.ArtifactStagingDirectory)
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/app'
+
+    - task: CopyFiles@2
+      displayName: 'Copy infrastructure templates to artifact staging directory'
+      inputs:
+        SourceFolder: '$(System.DefaultWorkingDirectory)'
+        Contents: 'src/main/az/*.json'
+        TargetFolder: '$(Build.ArtifactStagingDirectory)/infra'
 
     - task: PublishPipelineArtifact@0
       displayName: 'Publish pipeline artifacts'
@@ -68,8 +75,8 @@ stages:
         resourceGroupName: $(resourceGroupName)
         location: $(location)
         templateLocation: 'Linked artifact'
-        csmFile: 'src/main/az/azuredeploy.json'
-        csmParametersFile: 'src/main/az/parameters.json'
+        csmFile: '$(System.DefaultWorkingDirectory)/target/infra/azuredeploy.json'
+        csmParametersFile: '$(System.DefaultWorkingDirectory)/target/infra/parameters.json'
         overrideParameters: '-baseName $(baseAppName)'
 
     - task: AzureWebApp@1
@@ -78,4 +85,4 @@ stages:
         azureSubscription: $(azureSubscription)
         appType: webAppLinux
         appName: $(webAppName)
-        package: '$(System.DefaultWorkingDirectory)/target/app.jar'
+        package: '$(System.DefaultWorkingDirectory)/target/app/app.jar'
