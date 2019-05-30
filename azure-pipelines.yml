@@ -69,6 +69,10 @@ stages:
 
     - script: ls -aR
 
+    - script: |
+        cd $(Build.ArtifactStagingDirectory)
+        ls -aR
+
     - task: AzureWebApp@1
       displayName: 'Deploy Website'
       inputs:
