@@ -68,10 +68,6 @@ stages:
         artifactName: 'drop'
         targetPath: $(System.DefaultWorkingDirectory)
 
-    - script: |
-        cd $(System.DefaultWorkingDirectory)
-        ls -aR
-
     - task: AzureResourceGroupDeployment@2
       inputs:
         azureSubscription: $(azureSubscription)
