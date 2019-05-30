@@ -56,6 +56,11 @@ stages:
       vmImage: $(vmImageName)
 
     steps:
+    - task: DownloadPipelineArtifact@0
+      inputs:
+        artifactName: 'drop'
+        targetPath: $(System.DefaultWorkingDirectory)
+
     - task: AzureResourceGroupDeployment@2
       inputs:
         azureSubscription: $(azureSubscription)
@@ -70,7 +75,7 @@ stages:
     - script: ls -aR
 
     - script: |
-        cd $(Build.ArtifactStagingDirectory)
+        cd $(System.DefaultWorkingDirectory)
         ls -aR
 
     - task: AzureWebApp@1
