@@ -68,21 +68,25 @@ stages:
         artifactName: 'drop'
         targetPath: $(System.DefaultWorkingDirectory)
 
-    - task: AzureResourceGroupDeployment@2
-      inputs:
-        azureSubscription: $(azureSubscription)
-        action: "Create Or Update Resource Group"
-        resourceGroupName: $(resourceGroupName)
-        location: $(location)
-        templateLocation: 'Linked artifact'
-        csmFile: '$(System.DefaultWorkingDirectory)/target/infra/azuredeploy.json'
-        csmParametersFile: '$(System.DefaultWorkingDirectory)/target/infra/parameters.json'
-        overrideParameters: '-baseName $(baseAppName)'
+    - script: |
+        cd $(System.DefaultWorkingDirectory)
+        ls -aR
 
-    - task: AzureWebApp@1
-      displayName: 'Deploy Website'
-      inputs:
-        azureSubscription: $(azureSubscription)
-        appType: webAppLinux
-        appName: $(webAppName)
-        package: '$(System.DefaultWorkingDirectory)/target/app/app.jar'
+    # - task: AzureResourceGroupDeployment@2
+    #   inputs:
+    #     azureSubscription: $(azureSubscription)
+    #     action: "Create Or Update Resource Group"
+    #     resourceGroupName: $(resourceGroupName)
+    #     location: $(location)
+    #     templateLocation: 'Linked artifact'
+    #     csmFile: '$(System.DefaultWorkingDirectory)/target/infra/azuredeploy.json'
+    #     csmParametersFile: '$(System.DefaultWorkingDirectory)/target/infra/parameters.json'
+    #     overrideParameters: '-baseName $(baseAppName)'
+
+    # - task: AzureWebApp@1
+    #   displayName: 'Deploy Website'
+    #   inputs:
+    #     azureSubscription: $(azureSubscription)
+    #     appType: webAppLinux
+    #     appName: $(webAppName)
+    #     package: '$(System.DefaultWorkingDirectory)/target/app/app.jar'
