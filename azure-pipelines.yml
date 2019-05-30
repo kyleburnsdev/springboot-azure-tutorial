@@ -43,7 +43,7 @@ stages:
     - task: CopyFiles@2
       displayName: 'Copy infrastructure templates to artifact staging directory'
       inputs:
-        SourceFolder: '$(System.DefaultWorkingDirectory)src/main/az'
+        SourceFolder: '$(System.DefaultWorkingDirectory)/src/main/az'
         Contents: '*.json'
         TargetFolder: '$(Build.ArtifactStagingDirectory)/infra'
 
