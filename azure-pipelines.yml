@@ -72,12 +72,6 @@ stages:
         csmParametersFile: 'src/main/az/parameters.json'
         overrideParameters: '-baseName $(baseAppName)'
 
-    - script: ls -aR
-
-    # - script: |
-    #     cd $(System.DefaultWorkingDirectory)
-    #     ls -aR
-
     - task: AzureWebApp@1
       displayName: 'Deploy Website'
       inputs:
