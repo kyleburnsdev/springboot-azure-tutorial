@@ -4,10 +4,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping(path="/health")
-public class HealthController {
+@RequestMapping(path="/hello")
+public class HelloController {
     @GetMapping
-    public @ResponseBody String checkHealth() {
-        return "Application is running";
+    public @ResponseBody String greeting() {
+        return "Hello from Spring Boot";
     }
 }
