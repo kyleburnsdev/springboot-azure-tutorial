@@ -144,7 +144,7 @@ After adding this dependency, rebuild the application and navigate to the built-
 
 ## Adding the first controller
 
-The next step in the evolution of the application is to enable it to do something other than serve up 404 responses. To accomplish this, add a new Java source file called `src/main/java/com/kyleburnsdev/HelloController.java`. At this point, the class is pretty simple:
+The next step in the evolution of the application is to enable it to do something other than serve up 404 responses. To accomplish this, add a new Java source file called `src/main/java/com/kyleburnsdev/HomeController.java`. At this point, the class is pretty simple:
 
 ```java
 package com.kyleburnsdev;
@@ -153,8 +153,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping(path="/hello")
-public class HelloController {
+@RequestMapping(path="/")
+public class HomeController {
     @GetMapping
     public @ResponseBody String greeting() {
         return "Hello from Spring Boot";
@@ -166,10 +166,10 @@ Important things to note about the class include:
 
 - The `@Controller` annotation on the class tells Spring that this is a Controller expected to respond to HTTP requests
 - The  `@RequestMapping` annotation on the class provides the default URL prefix for all of the operations served by this controller
-- The `@GetMapping` annotation on the `greeting` method tells Spring that the method should be executed when requests to `/hello` are made using the GET HTTP verb
+- The `@GetMapping` annotation on the `greeting` method tells Spring that the method should be executed when requests to `/` are made using the GET HTTP verb
 - The `@ResponseBody` annotation on the return type of `greeting` tells Spring to map the string returned by the method into an HTTP response to be returned to the requestor
 
-After adding the class, rebuild the application and go to <http://localhost:8080/hello>. You should see "Hello from Spring Boot" displayed in the browser.
+After adding the class, rebuild the application and go to <http://localhost:8080/>. You should see "Hello from Spring Boot" displayed in the browser.
 
 ```bash
 mvn clean package
