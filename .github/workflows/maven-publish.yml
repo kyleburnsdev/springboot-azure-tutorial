@@ -2,11 +2,12 @@ name: PR Build
 
 on:
   pull_request:
-    types:
-      - opened
     branches:    
       - 'master'
       - 'main'
+  workflow_dispatch:
+    branches:
+      - '**'
 
 jobs:
   build:
@@ -26,5 +27,18 @@ jobs:
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
-    - name: Build with Maven
+    - name: Build App with Maven
       run: mvn clean package --file pom.xml
+
+    - name: Install Bicep
+      run: |
+        curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
+        chmod +x ./bicep
+        sudo mv ./bicep /usr/local/bin/bicep
+        bicep --help
+
+    - name: Generate ARM template
+      run: |
+        mkdir -p target/bicep
+        bicep build src/main/az/main.bicep --outdir target/bicep
+
