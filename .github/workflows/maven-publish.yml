@@ -39,5 +39,5 @@ jobs:
     - name: Generate ARM template
       run: |
         mkdir -p target/bicep
-        bicep build --file src/main/az/main.bicep --outdir target/bicep
+        bicep build src/main/az/main.bicep --outdir target/bicep
 
