@@ -1,6 +1,6 @@
 param webAppName string = uniqueString(resourceGroup().id) // Generate unique String for web app name
 param sku string = 'S1' // The SKU of App Service Plan
-param linuxFxVersion string = 'JAVA|8-jre8' // The runtime stack of web app
+param linuxFxVersion string = 'JAVA|11-java11' // The runtime stack of web app
 param location string = resourceGroup().location // Location for all resources
 
 // resource names derived from resource group id to ensure uniqueness
