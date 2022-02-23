@@ -1,5 +1,5 @@
 param webAppName string = uniqueString(resourceGroup().id) // Generate unique String for web app name
-param sku string = 'S1' // The SKU of App Service Plan
+param sku string = 'B1' // The SKU of App Service Plan
 param linuxFxVersion string = 'JAVA|11-java11' // The runtime stack of web app
 param location string = resourceGroup().location // Location for all resources
 
@@ -14,7 +14,13 @@ resource workspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
   location: location
   properties:{
     sku: {
-      name: 'Free'
+      name: 'PerGB2018'
+    }
+    retentionInDays: 30
+    features: {
+      searchVersion: 1
+      legacy: 0
+      enableLogAccessUsingOnlyResourcePermissions: true
     }
   }
 }
@@ -23,6 +29,10 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   name: applicationInsightsName
   location: location
   kind: 'web'
+  tags: {
+    displayName: 'AppInsight'
+    ProjectName: webAppName
+  }
   properties: {
     Application_Type: 'web'
     WorkspaceResourceId: workspace.id
