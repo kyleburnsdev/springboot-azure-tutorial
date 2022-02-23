@@ -96,3 +96,5 @@ resource appServiceSiteExtension 'Microsoft.Web/sites/config@2020-06-01' = {
   }
 }
 
+output websiteName string = appService.name
+

@@ -1,6 +1,10 @@
-name: PR Build
+name: CI Workflow
 
 on:
+  push:
+    branches:
+      - 'master'
+      - 'main'
   pull_request:
     branches:    
       - 'master'
@@ -11,11 +15,16 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       packages: write
+
+    env:
+      SHOULD_DEPLOY: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+      RESOURCE_GROUP_NAME: 'kyleburnsdev-springboot'
+      RESOURCE_GROUP_LOCATION: 'eastus'
 
     steps:
     - uses: actions/checkout@v2
@@ -41,4 +50,34 @@ jobs:
       run: |
         mkdir -p target/bicep
         bicep build src/main/az/main.bicep --outdir target/bicep
+
+    - name: Establish AZ connection
+      if: ${{ env.SHOULD_DEPLOY }}
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Ensure Resource Group Exists
+      if: ${{ env.SHOULD_DEPLOY }}
+      uses: Azure/CLI@v1
+      with:
+        inlineScript: |
+          #!/bin/bash
+          az group create --name ${{ env.RESOURCE_GROUP_NAME }} --location ${{ env.RESOURCE_GROUP_LOCATION }}
+
+    - name: Infra
+      id: Infra
+      if: ${{ env.SHOULD_DEPLOY }}
+      uses: azure/arm-deploy@v1
+      with:
+        resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
+        template: ./target/bicep/main.json
+
+    - name: App
+      if: ${{ env.SHOULD_DEPLOY }}
+      uses: Azure/CLI@v1
+      with:
+        inlineScript: |
+          #!/bin/bash
+          az webapp deploy --resource-group ${{ env.RESOURCE_GROUP_NAME }} --name ${{ steps.Infra.outputs.websiteName }} --src-path ./target/app.jar
 
