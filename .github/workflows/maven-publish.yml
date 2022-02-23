@@ -52,13 +52,13 @@ jobs:
         bicep build src/main/az/main.bicep --outdir target/bicep
 
     - name: Establish AZ connection
-      if: ${{ env.SHOULD_DEPLOY == true }}
+      if: ${{ env.SHOULD_DEPLOY == 'true' }}
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Ensure Resource Group Exists
-      if: ${{ env.SHOULD_DEPLOY == true }}
+      if: ${{ env.SHOULD_DEPLOY == 'true' }}
       uses: Azure/CLI@v1
       with:
         inlineScript: |
@@ -67,14 +67,14 @@ jobs:
 
     - name: Infra
       id: Infra
-      if: ${{ env.SHOULD_DEPLOY == true }}
+      if: ${{ env.SHOULD_DEPLOY == 'true' }}
       uses: azure/arm-deploy@v1
       with:
         resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
         template: ./target/bicep/main.json
 
     - name: App
-      if: ${{ env.SHOULD_DEPLOY == true }}
+      if: ${{ env.SHOULD_DEPLOY == 'true' }}
       uses: Azure/CLI@v1
       with:
         inlineScript: |
