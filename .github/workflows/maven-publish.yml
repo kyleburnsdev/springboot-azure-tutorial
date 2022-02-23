@@ -66,6 +66,7 @@ jobs:
           az group create --name ${{ env.RESOURCE_GROUP_NAME }} --location ${{ env.RESOURCE_GROUP_LOCATION }}
 
     - name: Infra
+      id: Infra
       if: ${{ env.SHOULD_DEPLOY }}
       uses: azure/arm-deploy@v1
       with:
