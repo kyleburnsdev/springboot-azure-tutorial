@@ -60,15 +60,25 @@ resource appService 'Microsoft.Web/sites@2020-06-01' = {
     siteConfig: {
       linuxFxVersion: linuxFxVersion
       healthCheckPath: '/actuator/health'
+      appSettings: [
+        {
+          'name': 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          'value': applicationInsights.properties.InstrumentationKey
+        }
+        {
+          'name': 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          'value': applicationInsights.properties.ConnectionString
+        }
+        {
+          'name': 'ApplicationInsightsAgent_EXTENSION_VERSION'
+          'value': '~3'
+        }
+        {
+          'name': 'XDT_MicrosoftApplicationInsights_Java'
+          'value': '1'
+        }
+      ]
     }
-  }
-}
-
-resource appServiceLogging 'Microsoft.Web/sites/config@2021-03-01' = {
-  parent: appService
-  name: 'appsettings'
-  properties: {
-    APPINSIGHTS_INSTRUMENTATIONKEY: applicationInsights.properties.InstrumentationKey
   }
 }
 
