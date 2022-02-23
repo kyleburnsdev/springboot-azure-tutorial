@@ -175,3 +175,35 @@ After adding the class, rebuild the application and go to <http://localhost:8080
 mvn clean package
 java -jar target/app.jar
 ```
+## A Note About Deployment to Azure
+Building out Infrastructure as Code is worthy of a complete tutorial, but I don't want to pull you down that rabbit hole since it's likely to distract from the main topic of this learning journey. Throughout the journey, a [Bicep](https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/overview?tabs=bicep) template for provisioning infrastructure and [GitHub Action](https://docs.github.com/en/actions) workflow will be progressively built out to support what is happening in the application. The Bicep template can be found in the repo at `src/main/az/main.bicep` and the Github workflow at `.github/workflows/maven-publish.yml`.
+
+If you plan to use the provided GitHub workflow, please review <https://github.com/marketplace/actions/azure-login#configure-deployment-credentials> for important information on how to set up an identity in Azure that can be used to deploy your application. You will *need* to [create a secret](https://github.com/Azure/actions-workflow-samples/blob/master/assets/create-secrets-for-GitHub-workflows.md) in your GitHub repository called `AZURE_CREDENTIALS` for the workflow to successfully execute.
+
+If you choose not to use the provided templates, I will at each stage describe infrastructure and relevant settings being deployed, but YMMV and you may find that much less time is spent debugging if you use the provided templates.
+
+## Deploying the Basic App
+With a tested and working application packaged into your JAR file, it's time to deploy the application to Azure. I created the following resources (with relevant settings) into a single [Azure Resource Group](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/manage-resource-groups-portal#what-is-a-resource-group) which allows me to easily clean up the solution by deleting the resource group and all of its contents:
+
+- [Log Analytics Workspace](https://docs.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-workspace-overview)
+  - "Per Gigabyte (2018)" pricing tier
+- [Application Insights](https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview)
+  - Connected to Log Analytics Workspace above
+- [App Service Plan](https://docs.microsoft.com/en-us/azure/app-service/overview-hosting-plans)
+  - Linux operating system
+  - `B1` SKU for pricing
+- [App Service](https://docs.microsoft.com/en-us/azure/app-service/overview)
+  - Connected to above App Service Plan
+  - Code deployment (not container)
+  - Java 11 runtime stack
+  - Healthcheck URL set to /actuator/health
+
+With the infrastructure deployed, the application can be deployed to the App Service using the following CLI command (replacing the bracketed values with your own):
+```bash
+az webapp deploy --resource-group <YOUR_RG_NAME> --name <YOUR_WEBSITE_NAME> --src-path ./target/app.jar
+```
+
+With infrastructure provisioned and code deployed, explore your deployed App Service and Application Insights.
+
+## Checkpoint
+At this point, you've created a simple Spring Boot Application and deployed it into Azure App Service. All of the stated success criteria have been demonstrated with the exception of "no secrets in source control" because up until this point the application has not needed any secrets. We'll build that into the application in our next installment!
