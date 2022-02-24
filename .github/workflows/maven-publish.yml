@@ -82,23 +82,7 @@ jobs:
 
     -name: Create Annotation
      run: |
-        props=$(cat <<EOF
-        {
-        'BuildNumber': '${{ github.run_number }}',
-        'BuildRepositoryName': '${{ github.repository }}',
-        'BuildRepositoryProvider': 'Github',
-        'ReleaseDefinitionName': '${{ github.workflow }}',
-        'ReleaseDescription': 'Triggered by ${{ github.workflow }} ${{ github.sha }}',
-        'ReleaseEnvironmentName': '',
-        'ReleaseId': '${{ github.run_id }}',
-        'ReleaseName': '$(Release.ReleaseName)',
-        'ReleaseRequestedFor': '${{ github.actor }}',
-        'ReleaseWebUrl': '$(Release.ReleaseWebUrl)',
-        'SourceBranch': '${{ github.ref_name }}',
-        'TeamFoundationCollectionUri': '${{ github.repositoryUrl }}'
-        }
-        EOF
-        )
+        props= "{'BuildNumber': '${{ github.run_number }}','BuildRepositoryName': '${{ github.repository }}','BuildRepositoryProvider': 'Github','ReleaseDefinitionName': '${{ github.workflow }}','ReleaseDescription': 'Triggered by ${{ github.workflow }} ${{ github.sha }}','ReleaseEnvironmentName': '','ReleaseId': '${{ github.run_id }}','ReleaseName': '$(Release.ReleaseName)','ReleaseRequestedFor': '${{ github.actor }}','ReleaseWebUrl': '$(Release.ReleaseWebUrl)','SourceBranch': '${{ github.ref_name }}','TeamFoundationCollectionUri': '${{ github.repositoryUrl }}'}"
         echo $props | jq
 
 
