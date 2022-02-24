@@ -75,7 +75,7 @@ jobs:
 
     - name: App
       if: ${{ env.SHOULD_DEPLOY == 'true' }}
-      uses: azure/webapp-deploy@v2
+      uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ steps.Infra.outputs.websiteName }}
         package: ./target/app.jar
