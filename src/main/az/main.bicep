@@ -111,24 +111,14 @@ resource appServiceSiteExtension 'Microsoft.Web/sites/config@2020-06-01' = {
 }
 
 resource keyvault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
-  name:keyvaultName
+  name: keyvaultName
   location: location
   properties: {
     sku: {
-      name: 'standard'
       family: 'A'
+      name: 'standard'
     }
     tenantId: subscription().tenantId
-    accessPolicies: [
-      {
-        objectId: appService.identity.principalId
-        tenantId: subscription().tenantId
-        permissions: { 
-          keys: [ 'get', 'list' ]
-          secrets: [ 'get', 'list' ]
-        }
-      }
-    ]
   }
 }
 
