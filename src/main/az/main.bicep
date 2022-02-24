@@ -64,29 +64,20 @@ resource appService 'Microsoft.Web/sites@2020-06-01' = {
     siteConfig: {
       linuxFxVersion: linuxFxVersion
       healthCheckPath: '/actuator/health'
-      appSettings: [
-        {
-          'name': 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          'value': applicationInsights.properties.InstrumentationKey
-        }
-        {
-          'name': 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-          'value': applicationInsights.properties.ConnectionString
-        }
-        {
-          'name': 'ApplicationInsightsAgent_EXTENSION_VERSION'
-          'value': '~3'
-        }
-        {
-          'name': 'XDT_MicrosoftApplicationInsights_Java'
-          'value': '1'
-        }
-        {
-          'name': 'MY_SECRET_VALUE'
-          'value': 'REPLACE ME'
-        }
-      ]
     }
+  }
+}
+
+resource symbolicname 'Microsoft.Web/sites/config@2021-03-01' = {
+  name: 'appsettings'
+  kind: 'string'
+  parent: appService
+  properties: {
+    APPINSIGHTS_INSTRUMENTATIONKEY: applicationInsights.properties.InstrumentationKey
+    APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsights.properties.ConnectionString
+    ApplicationInsightsAgent_EXTENSION_VERSION: '~3'
+    XDT_MicrosoftApplicationInsights_Java: '1'
+    MY_SECRET_VALUE: '@Microsoft.KeyVault(VaultName=${keyvault.name};SecretName=mysecret)'
   }
 }
 
@@ -139,6 +130,15 @@ resource keyvault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
         tenantId: subscription().tenantId
       }
     ]
+  }
+}
+
+resource secret 'Microsoft.KeyVault/vaults/secrets@2021-11-01-preview' = {
+  name: 'mysecret'
+  parent: keyvault
+  properties: {
+    contentType: 'text/plain'
+    value: 'replace me'
   }
 }
 
