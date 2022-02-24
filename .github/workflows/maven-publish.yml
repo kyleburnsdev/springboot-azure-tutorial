@@ -75,9 +75,8 @@ jobs:
 
     - name: App
       if: ${{ env.SHOULD_DEPLOY == 'true' }}
-      uses: Azure/CLI@v1
+      uses: azure/webapps-deploy@v2
       with:
-        inlineScript: |
-          #!/bin/bash
-          az webapp deploy --resource-group ${{ env.RESOURCE_GROUP_NAME }} --name ${{ steps.Infra.outputs.websiteName }} --src-path ./target/app.jar
+        app-name: ${{ steps.Infra.outputs.websiteName }}
+        package: ./target/app.jar
 
