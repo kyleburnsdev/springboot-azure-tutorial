@@ -80,3 +80,26 @@ jobs:
         app-name: ${{ steps.Infra.outputs.websiteName }}
         package: ./target/app.jar
 
+    - name: Create Annotation
+      run: |
+        props=$(cat << EOF
+        {
+          "BuildNumber": "${{ github.run_number }}",
+          "BuildRepositoryName": "${{ github.repository }}",
+          "BuildRepositoryProvider": "Github",
+          "ReleaseDefinitionName": "${{ github.workflow }}",
+          "ReleaseDescription": "Triggered by ${{ github.workflow }} ${{ github.sha }}",
+          "ReleaseEnvironmentName": "",
+          "ReleaseId": "${{ github.run_id }}",
+          "ReleaseName": "${{ github.workflow }}",
+          "ReleaseRequestedFor": "${{ github.actor }}",
+          "ReleaseWebUrl": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+          "SourceBranch": "${{ github.ref_name }}",
+          "TeamFoundationCollectionUri": "${{ github.repositoryUrl }}"
+        }
+        EOF
+        )
+        echo $props
+        echo $props | jq
+
+
