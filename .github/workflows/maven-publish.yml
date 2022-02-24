@@ -82,7 +82,7 @@ jobs:
 
     -name: Create Annotation
      run: |
-        props= $(cat <<EOF
+        props=$(cat <<EOF
         {
         'BuildNumber': '${{ github.run_number }}',
         'BuildRepositoryName': '${{ github.repository }}',
@@ -98,6 +98,7 @@ jobs:
         'TeamFoundationCollectionUri': '${{ github.repositoryUrl }}'
         }
         EOF
+        )
         echo $props | jq
 
 
