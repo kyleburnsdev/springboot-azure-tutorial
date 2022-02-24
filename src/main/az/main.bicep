@@ -119,6 +119,22 @@ resource keyvault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
       name: 'standard'
     }
     tenantId: subscription().tenantId
+    accessPolicies:[
+      {
+        objectId: appService.identity.principalId
+        permissions: {
+          keys: [
+            'list'
+            'get'
+          ]
+          secrets: [
+            'list'
+            'get'
+          ]
+        }
+        tenantId: subscription().tenantId
+      }
+    ]
   }
 }
 
