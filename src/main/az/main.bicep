@@ -77,6 +77,10 @@ resource appService 'Microsoft.Web/sites@2020-06-01' = {
           'name': 'XDT_MicrosoftApplicationInsights_Java'
           'value': '1'
         }
+        {
+          'name': 'MY_SECRET_VALUE'
+          'value': 'REPLACE ME'
+        }
       ]
     }
   }
