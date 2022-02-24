@@ -84,18 +84,18 @@ jobs:
       run: |
         props=$(cat << EOF
         {
-          'BuildNumber': '${{ github.run_number }}',
-          'BuildRepositoryName': '${{ github.repository }}',
-          'BuildRepositoryProvider': 'Github',
-          'ReleaseDefinitionName': '${{ github.workflow }}',
-          'ReleaseDescription': 'Triggered by ${{ github.workflow }} ${{ github.sha }}',
-          'ReleaseEnvironmentName': '',
-          'ReleaseId': '${{ github.run_id }}',
-          'ReleaseName': '${{ github.workflow }}',
-          'ReleaseRequestedFor': '${{ github.actor }}',
-          'ReleaseWebUrl': '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}',
-          'SourceBranch': '${{ github.ref_name }}',
-          'TeamFoundationCollectionUri': '${{ github.repositoryUrl }}'
+          "BuildNumber": "${{ github.run_number }}",
+          "BuildRepositoryName": "${{ github.repository }}",
+          "BuildRepositoryProvider": "Github",
+          "ReleaseDefinitionName": "${{ github.workflow }}",
+          "ReleaseDescription": "Triggered by ${{ github.workflow }} ${{ github.sha }}",
+          "ReleaseEnvironmentName": "",
+          "ReleaseId": "${{ github.run_id }}",
+          "ReleaseName": "${{ github.workflow }}",
+          "ReleaseRequestedFor": "${{ github.actor }}",
+          "ReleaseWebUrl": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+          "SourceBranch": "${{ github.ref_name }}",
+          "TeamFoundationCollectionUri": "${{ github.repositoryUrl }}"
         }
         EOF
         )
