@@ -8,6 +8,7 @@ var appServicePlanName = toLower('${webAppName}-plan')
 var webSiteName = toLower('${webAppName}-web')
 var workspaceName = toLower('${webAppName}-law')
 var applicationInsightsName = toLower('${webAppName}-ai')
+var keyvaultName = toLower('${webAppName}-kv')
 
 resource workspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
   name: workspaceName
@@ -55,6 +56,9 @@ resource appService 'Microsoft.Web/sites@2020-06-01' = {
   name: webSiteName
   location: location
   kind: 'app'
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
@@ -106,5 +110,27 @@ resource appServiceSiteExtension 'Microsoft.Web/sites/config@2020-06-01' = {
   }
 }
 
-output websiteName string = appService.name
+resource keyvault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
+  name:keyvaultName
+  location: location
+  properties: {
+    sku: {
+      name: 'standard'
+      family: 'A'
+    }
+    tenantId: subscription().tenantId
+    accessPolicies: [
+      {
+        objectId: appService.identity.principalId
+        tenantId: subscription().tenantId
+        permissions: { 
+          keys: [ 'get', 'list' ]
+          secrets: [ 'get', 'list' ]
+        }
+      }
+    ]
+  }
+}
 
+output websiteName string = appService.name
+output websiteIdentity string = appService.identity.principalId
