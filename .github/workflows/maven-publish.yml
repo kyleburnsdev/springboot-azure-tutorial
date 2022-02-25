@@ -108,6 +108,7 @@ jobs:
         body=${props//[$'\t\r\n']}
         echo $body
         escapedBody=${body//\"/\"\"}
+        echo $escapedBody
         echo $props | jq
         echo ${{ steps.Infra.outputs.applicationInsightsReleaseAnnotationUri }}
 
