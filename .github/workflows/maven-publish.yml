@@ -84,9 +84,9 @@ jobs:
       run: |
         props=$(cat << EOF
         {
-          "Id": "${{ steps.Infra.outputs.releaseAnnotationId }}"
-          "AnnotationName": "${{ github.workflow }}"
-          "EventTime": "${{ steps.Infra.outputs.releaseAnnotationDate }}"
+          "Id": "${{ steps.Infra.outputs.releaseAnnotationId }}",
+          "AnnotationName": "${{ github.workflow }}",
+          "EventTime": "${{ steps.Infra.outputs.releaseAnnotationDate }}",
           "Category": "Deployment",
           "Properties": {
             "BuildNumber": "${{ github.run_number }}",
