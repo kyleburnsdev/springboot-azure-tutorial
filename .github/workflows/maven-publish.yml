@@ -86,6 +86,7 @@ jobs:
       uses: Azure/CLI@v1
       with:
         inlineScript: |
+          az config set extension.use_dynamic_install=yes_without_prompt
           result=$(az monitor app-insights api-key create \
                       --api-key gitRelease \
                       --write-properties WriteAnnotations \
