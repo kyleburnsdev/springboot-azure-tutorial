@@ -110,9 +110,9 @@ jobs:
           )
           body=${props//[$'\t\r\n']}
           echo $body
-          escapedBody=${body//\"/\"\"}
+          escapedBody=${body//\"/\'}
           echo $escapedBody
           echo ${{ steps.Infra.outputs.applicationInsightsReleaseAnnotationUri }}
-          az rest --method put --uri "${{ steps.Infra.outputs.applicationInsightsReleaseAnnotationUri }}" --body "$body "
+          az rest --method put --uri "${{ steps.Infra.outputs.applicationInsightsReleaseAnnotationUri }}" --body "$escapedBody "
 
 
