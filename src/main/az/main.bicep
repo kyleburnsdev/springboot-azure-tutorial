@@ -2,6 +2,8 @@ param webAppName string = uniqueString(resourceGroup().id) // Generate unique St
 param sku string = 'B1' // The SKU of App Service Plan
 param linuxFxVersion string = 'JAVA|11-java11' // The runtime stack of web app
 param location string = resourceGroup().location // Location for all resources
+param releaseAnnotationGuid string = newGuid()
+param releaseAnnotationDateStamp string = utcNow('yyyy-MM-ddTHH:mm:ss')
 
 // resource names derived from resource group id to ensure uniqueness
 var appServicePlanName = toLower('${webAppName}-plan')
@@ -144,3 +146,6 @@ resource secret 'Microsoft.KeyVault/vaults/secrets@2021-11-01-preview' = {
 
 output websiteName string = appService.name
 output websiteIdentity string = appService.identity.principalId
+output applicationInsightsReleaseAnnotationUri string = '${applicationInsights.id}/Annotations?api-version=2015-05-01'
+output releaseAnnotationId string = releaseAnnotationGuid
+output releaseAnnotationDate string = releaseAnnotationDateStamp
