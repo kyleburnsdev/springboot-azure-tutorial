@@ -87,7 +87,7 @@ jobs:
       with:
         inlineScript: |
           az config set extension.use_dynamic_install=yes_without_prompt
-          existingKey=$(az monitor app-insights api-key show 
+          existingKey=$(az monitor app-insights api-key show \
                             --app ${{ steps.Infra.outputs.applicationInsightsApiAppId }} \
                             --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
                             --api-key gitRelease \
