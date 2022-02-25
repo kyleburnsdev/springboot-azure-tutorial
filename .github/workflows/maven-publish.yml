@@ -113,6 +113,6 @@ jobs:
           escapedBody=${body//\"/\"\"}
           echo $escapedBody
           echo ${{ steps.Infra.outputs.applicationInsightsReleaseAnnotationUri }}
-          az rest --method put --uri "${{ steps.Infra.outputs.applicationInsightsReleaseAnnotationUri }}" --body "$($escapedBody) "
+          az rest --method put --uri "${{ steps.Infra.outputs.applicationInsightsReleaseAnnotationUri }}" --body "$escapedBody "
 
 
