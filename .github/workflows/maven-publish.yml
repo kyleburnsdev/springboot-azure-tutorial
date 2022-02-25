@@ -92,7 +92,7 @@ jobs:
                       --write-properties WriteAnnotations \
                       -g ${{ env.RESOURCE_GROUP_NAME }} \
                       --app ${{ steps.Infra.outputs.applicationInsightsApiAppId }} \
-                      --query ".apiKey" --output tsv)
+                      --query "apiKey" --output tsv)
           echo "::set-output name=aiKey::$result"
     
     - name: Consume AI Key For App Insights
