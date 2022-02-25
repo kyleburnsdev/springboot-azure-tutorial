@@ -146,6 +146,6 @@ resource secret 'Microsoft.KeyVault/vaults/secrets@2021-11-01-preview' = {
 
 output websiteName string = appService.name
 output websiteIdentity string = appService.identity.principalId
-output applicationInsightsReleaseAnnotationUri string = '${applicationInsights.id}/Annotations?api-version=2015-05-01'
+output applicationInsightsApiAppId string = applicationInsights.properties.ApplicationId
 output releaseAnnotationId string = releaseAnnotationGuid
 output releaseAnnotationDate string = releaseAnnotationDateStamp
