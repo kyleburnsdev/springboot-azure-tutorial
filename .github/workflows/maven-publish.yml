@@ -92,7 +92,7 @@ jobs:
                             --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
                             --api-key gitRelease \
                             --query "apiKey" --output tsv)
-          if[ "$existingKey" = "" ];
+          if [ "$existingKey" = "" ];
           then
             result=$(az monitor app-insights api-key create \
                         --api-key gitRelease \
