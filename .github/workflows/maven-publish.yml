@@ -80,39 +80,23 @@ jobs:
         app-name: ${{ steps.Infra.outputs.websiteName }}
         package: ./target/app.jar
 
-    - name: Create Annotation
+    - name: Generate API Key For App Insights
+      id: AIKeyGen
       if: ${{ env.SHOULD_DEPLOY == 'true' }}
       uses: Azure/CLI@v1
       with:
         inlineScript: |
-          props=$(cat << EOF
-          {
-            "Id": "${{ steps.Infra.outputs.releaseAnnotationId }}",
-            "AnnotationName": "${{ github.workflow }}",
-            "EventTime": "${{ steps.Infra.outputs.releaseAnnotationDate }}",
-            "Category": "Deployment",
-            "Properties": {
-              "BuildNumber": "${{ github.run_number }}",
-              "BuildRepositoryName": "${{ github.repository }}",
-              "BuildRepositoryProvider": "Github",
-              "ReleaseDefinitionName": "${{ github.workflow }}",
-              "ReleaseDescription": "Triggered by ${{ github.workflow }} ${{ github.sha }}",
-              "ReleaseEnvironmentName": "",
-              "ReleaseId": "${{ github.run_id }}",
-              "ReleaseName": "${{ github.workflow }}",
-              "ReleaseRequestedFor": "${{ github.actor }}",
-              "ReleaseWebUrl": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-              "SourceBranch": "${{ github.ref_name }}",
-              "TeamFoundationCollectionUri": "${{ github.repositoryUrl }}"
-            }
-          }
-          EOF
-          )
-          body=${props//[$'\t\r\n']}
-          echo $body
-          escapedBody=${body//\"/\'}
-          echo $escapedBody
-          echo ${{ steps.Infra.outputs.applicationInsightsReleaseAnnotationUri }}
-          az rest --method put --uri "${{ steps.Infra.outputs.applicationInsightsReleaseAnnotationUri }}" --body "$escapedBody "
+          result=$(az monitor app-insights api-key create \
+                      --api-key gitRelease \
+                      --write-properties WriteAnnotations \
+                      -g ${{ env.RESOURCE_GROUP_NAME }} \
+                      --app ${{ steps.Infra.outputs.applicationInsightsApiAppId }} )
+          echo "::set-output name=aiKey::$result"
+    
+    - name: Consume AI Key For App Insights
+      if: ${{ env.SHOULD_DEPLOY == 'true' }}
+      run: |
+        echo ${{ steps.AIKeyGen.outputs.aiKey }}
+
 
 
