@@ -87,12 +87,22 @@ jobs:
       with:
         inlineScript: |
           az config set extension.use_dynamic_install=yes_without_prompt
-          result=$(az monitor app-insights api-key create \
-                      --api-key gitRelease \
-                      --write-properties WriteAnnotations \
-                      -g ${{ env.RESOURCE_GROUP_NAME }} \
-                      --app ${{ steps.Infra.outputs.applicationInsightsApiAppId }} \
-                      --query "apiKey" --output tsv)
+          existingKey=$(az monitor app-insights api-key show 
+                            --app ${{ steps.Infra.outputs.applicationInsightsApiAppId }} \
+                            --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
+                            --api-key gitRelease \
+                            --query "apiKey" --output tsv)
+          if[ "$existingKey" = "" ];
+          then
+            result=$(az monitor app-insights api-key create \
+                        --api-key gitRelease \
+                        --write-properties WriteAnnotations \
+                        -g ${{ env.RESOURCE_GROUP_NAME }} \
+                        --app ${{ steps.Infra.outputs.applicationInsightsApiAppId }} \
+                        --query "apiKey" --output tsv)
+          else
+            result=$existingKey
+          fi
           echo "::set-output name=aiKey::$result"
     
     - name: Consume AI Key For App Insights
