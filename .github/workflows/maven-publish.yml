@@ -91,7 +91,7 @@ jobs:
                       --api-key ${{ steps.Infra.outputs.releaseAnnotationId }} \
                       --write-properties WriteAnnotations \
                       -g ${{ env.RESOURCE_GROUP_NAME }} \
-                      --app ${{ steps.Infra.outputs.applicationInsightsApiAppId }} \
+                      --app ${{ steps.Infra.outputs.applicationInsightsApplicationId }} \
                       --query "apiKey" --output tsv)
           echo "::set-output name=aiKey::$result"
     
@@ -120,7 +120,7 @@ jobs:
           az monitor app-insights api-key delete \
                       --api-key ${{ steps.Infra.outputs.releaseAnnotationId }} \
                       -g ${{ env.RESOURCE_GROUP_NAME }} \
-                      --app ${{ steps.Infra.outputs.applicationInsightsApiAppId }} 
+                      --app ${{ steps.Infra.outputs.applicationInsightsApplicationId }} 
 
 
 
