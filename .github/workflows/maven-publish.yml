@@ -97,6 +97,6 @@ jobs:
       if: ${{ env.SHOULD_DEPLOY == 'true' }}
       run: |
         echo ${{ steps.AIKeyGen.outputs.aiKey }}
-          
+
 
 
