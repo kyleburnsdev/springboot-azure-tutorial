@@ -100,6 +100,17 @@ jobs:
       run: |
         echo ${{ steps.AIKeyGen.outputs.aiKey }}
 
+    - name: Annotate deployment
+      if: ${{ env.SHOULD_DEPLOY == 'true' }}
+      uses: wictorwilen/application-insights-action@v1
+      id: annotation
+      with:
+        applicationId: ${{ steps.Infra.outputs.applicationInsightsApiAppId }}
+        apiKey: ${{ steps.AIKeyGen.outputs.aiKey }}
+        releaseName: ${{ github.event_name }}
+        message: ${{ github.event.head_commit.message }}
+        actor: ${{ github.actor }}
+
     - name: Remove Temporary API Key For App Insights
       if: ${{ env.SHOULD_DEPLOY == 'true' }}
       uses: Azure/CLI@v1
