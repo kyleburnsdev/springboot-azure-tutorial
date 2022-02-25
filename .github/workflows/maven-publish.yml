@@ -101,7 +101,6 @@ jobs:
         echo ${{ steps.AIKeyGen.outputs.aiKey }}
 
     - name: Remove Temporary API Key For App Insights
-      id: AIKeyGen
       if: ${{ env.SHOULD_DEPLOY == 'true' }}
       uses: Azure/CLI@v1
       with:
