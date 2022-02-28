@@ -54,14 +54,14 @@ jobs:
     - name: Publish App Artifact
       uses: actions/upload-artifact@v2
       with:
-        - name: app
-        - path: ./target/app.jar
+        name: app
+        path: ./target/app.jar
 
     - name: Publish Infra Artifact
       uses: actions/upload-artifact@v2
       with:
-        - name: infra
-        - path: ./target/bicep/main.json
+        name: infra
+        path: ./target/bicep/main.json
 
     - name: Establish AZ connection
       if: ${{ env.SHOULD_DEPLOY == 'true' }}
