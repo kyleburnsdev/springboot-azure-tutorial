@@ -63,6 +63,15 @@ jobs:
         name: infra
         path: ./target/bicep/main.json
 
+  deploy_poc:
+    uses: ./.github/workflows/deploy-to-environment.yml
+    with:
+      resource-group-base-name: 'my-sb-app'
+      environment-suffix: 'poc'
+      resource-group-location: 'eastus2'
+    secrets:
+      azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+
   deploy_dev:
     runs-on: ubuntu-latest
     needs: build
