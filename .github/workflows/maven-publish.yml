@@ -13,10 +13,10 @@ on:
     branches:
       - '**'
 
-  env:
-    SHOULD_DEPLOY: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-    RESOURCE_GROUP_NAME: 'kyleburnsdev-springboot'
-    RESOURCE_GROUP_LOCATION: 'eastus'
+env:
+  SHOULD_DEPLOY: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+  RESOURCE_GROUP_NAME: 'kyleburnsdev-springboot'
+  RESOURCE_GROUP_LOCATION: 'eastus'
 
 jobs:
   build:
