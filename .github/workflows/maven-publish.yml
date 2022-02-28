@@ -64,6 +64,7 @@ jobs:
         path: ./target/bicep/main.json
 
   deploy_poc:
+    if: ${{ env.SHOULD_DEPLOY == 'true' }}
     needs: build
     uses: ./.github/workflows/deploy-to-environment.yml
     with:
