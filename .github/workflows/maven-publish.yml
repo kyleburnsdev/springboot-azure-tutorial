@@ -13,6 +13,11 @@ on:
     branches:
       - '**'
 
+env:
+  SHOULD_DEPLOY: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+  RESOURCE_GROUP_NAME: 'kyleburnsdev-springboot'
+  RESOURCE_GROUP_LOCATION: 'eastus'
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,11 +25,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-
-    env:
-      SHOULD_DEPLOY: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-      RESOURCE_GROUP_NAME: 'kyleburnsdev-springboot'
-      RESOURCE_GROUP_LOCATION: 'eastus'
 
     steps:
     - uses: actions/checkout@v2
@@ -51,6 +51,30 @@ jobs:
         mkdir -p target/bicep
         bicep build src/main/az/main.bicep --outdir target/bicep
 
+    - name: Publish App Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: app
+        path: ./target/app.jar
+
+    - name: Publish Infra Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: infra
+        path: ./target/bicep/main.json
+
+  deploy_dev:
+    runs-on: ubuntu-latest
+    needs: build
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Download Artifacts
+      uses: actions/download-artifact@v2
+
     - name: Establish AZ connection
       if: ${{ env.SHOULD_DEPLOY == 'true' }}
       uses: azure/login@v1
@@ -71,14 +95,14 @@ jobs:
       uses: azure/arm-deploy@v1
       with:
         resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
-        template: ./target/bicep/main.json
+        template: ./infra/main.json
 
     - name: App
       if: ${{ env.SHOULD_DEPLOY == 'true' }}
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ steps.Infra.outputs.websiteName }}
-        package: ./target/app.jar
+        package: ./app/app.jar
 
     - name: Generate Temporary API Key For App Insights
       id: AIKeyGen
