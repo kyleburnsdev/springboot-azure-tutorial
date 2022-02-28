@@ -64,6 +64,7 @@ jobs:
         path: ./target/bicep/main.json
 
   deploy_poc:
+    needs: build
     uses: ./.github/workflows/deploy-to-environment.yml
     with:
       resource-group-base-name: 'my-sb-app'
