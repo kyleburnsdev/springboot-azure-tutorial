@@ -85,17 +85,6 @@ jobs:
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
-  perf:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-    needs: test
-    uses: ./.github/workflows/deploy-to-environment.yml
-    with:
-      resource-group-base-name: 'my-sb-app'
-      environment-suffix: 'perf'
-      resource-group-location: 'eastus2'
-    secrets:
-      azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
-
   qa:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     needs: test
