@@ -51,6 +51,18 @@ jobs:
         mkdir -p target/bicep
         bicep build src/main/az/main.bicep --outdir target/bicep
 
+    - name: Publish App Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        - name: app
+        - path: ./target/app.jar
+
+    - name: Publish Infra Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        - name: infra
+        - path: ./target/bicep/main.json
+
     - name: Establish AZ connection
       if: ${{ env.SHOULD_DEPLOY == 'true' }}
       uses: azure/login@v1
