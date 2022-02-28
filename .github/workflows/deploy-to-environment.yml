@@ -1,0 +1,102 @@
+name: Deployment
+
+on:
+  workflow_call:
+    inputs:
+      resource-group-base-name:
+        description: 'Resource Group base name'
+        default: 'kyleburnsdev-springboot'
+        required: false
+        type: string
+      environment-suffix:
+        description: 'The suffix to be used for the current environment'
+        default: 'dev'
+        required: false
+        type: string
+      resource-group-location:
+        description: 'Azure region for the deployed resources'
+        default: 'eastus'
+        required: false
+        type: string
+    secrets:
+      azure-credentials:
+        description: 'Credentials used to log into Azure for deployment of resources'
+        required: true
+
+jobs:
+  deploy_to_environment:
+    runs-on: ubuntu-latest
+    env:
+      RESOURCE_GROUP_NAME: ${{ inputs.resource-group-base-name }}-${{ inputs.environment-suffix }}
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Download Artifacts
+      uses: actions/download-artifact@v2
+
+    - name: Establish AZ connection
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.azure-credentials }}
+
+    - name: Ensure Resource Group Exists
+      uses: Azure/CLI@v1
+      with:
+        inlineScript: |
+          #!/bin/bash
+          az group create --name ${{ env.RESOURCE_GROUP_NAME }} --location ${{ inputs.resource-group-location }}
+
+    - name: Infra
+      id: Infra
+      uses: azure/arm-deploy@v1
+      with:
+        resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
+        template: ./infra/main.json
+
+    - name: App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ steps.Infra.outputs.websiteName }}
+        package: ./app/app.jar
+
+    - name: Generate Temporary API Key For App Insights
+      id: AIKeyGen
+      uses: Azure/CLI@v1
+      with:
+        inlineScript: |
+          az config set extension.use_dynamic_install=yes_without_prompt
+          result=$(az monitor app-insights api-key create \
+                      --api-key ${{ steps.Infra.outputs.releaseAnnotationId }} \
+                      --write-properties WriteAnnotations \
+                      -g ${{ env.RESOURCE_GROUP_NAME }} \
+                      --app ${{ steps.Infra.outputs.applicationInsightsApplicationId }} \
+                      --query "apiKey" --output tsv)
+          echo "::set-output name=aiKey::$result"
+    
+    - name: Consume AI Key For App Insights
+      run: |
+        echo ${{ steps.AIKeyGen.outputs.aiKey }}
+
+    - name: Annotate deployment
+      uses: wictorwilen/application-insights-action@v1
+      id: annotation
+      with:
+        applicationId: ${{ steps.Infra.outputs.applicationInsightsApiAppId }}
+        apiKey: ${{ steps.AIKeyGen.outputs.aiKey }}
+        releaseName: ${{ github.event_name }}
+        message: ${{ github.event.head_commit.message }}
+        actor: ${{ github.actor }}
+
+    - name: Remove Temporary API Key For App Insights
+      uses: Azure/CLI@v1
+      with:
+        inlineScript: |
+          az config set extension.use_dynamic_install=yes_without_prompt
+          az monitor app-insights api-key delete \
+                      --api-key ${{ steps.Infra.outputs.releaseAnnotationId }} \
+                      -g ${{ env.RESOURCE_GROUP_NAME }} \
+                      --app ${{ steps.Infra.outputs.applicationInsightsApplicationId }} 
+
