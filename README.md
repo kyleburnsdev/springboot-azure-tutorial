@@ -207,3 +207,21 @@ With infrastructure provisioned and code deployed, explore your deployed App Ser
 
 ## Checkpoint
 At this point, you've created a simple Spring Boot Application and deployed it into Azure App Service. All of the stated success criteria have been demonstrated with the exception of "no secrets in source control" because up until this point the application has not needed any secrets. We'll build that into the application in our next installment!
+
+## Keeping secrets out of source control
+### Why Environment Variables
+Now that we have a working minimal application, the next step towards making the application useful is to learn how to deal with environment variables and secrets. Having secrets stored in source control, even temporarily, has been the root cause of many major security incidents over the years. Because this is such a big deal, I am a huge proponent of the idea that even for sample and POC applications we as responsible developers should develop a habit of *never* hard coding secrets. It doesn't take that much additional effort to use environment variables and once the habit is formed, deployment of our application into Azure allows us a lot of flexibility into how the environment variable is eventually populated at runtime.
+
+Besides the security implications of secrets in source control, there are also maintainability reasons to use environment variables for secrets and configuration elements that may vary by deployment environment. If you take design inspiration from 12 Factor App concepts, then you may be familiar with the idea of [storing config in the environment](https://12factor.net/config) so that you can achieve [one codebase, many deploys](https://12factor.net/codebase). I am not going to recreate that work here, but it is well worth reading and quite brief.
+
+### Set up for environment variables
+Environment variables needed for this tutorial have been added to the file `.env.example` in the repository root. Additionally, the shell script `import-environment.sh` has been set up to import environment variables from a file called `.env`. My recommendation is to copy the `.env.example` file to `.env` and make any desired changes to variable values (leaving the variable name intact). The `.env` file is included in the gitignore for this repository in order to reduce the chance that secrets used during development and debugging will inadvertantly be committed to source control. After setting up your `.env` file, run the following:
+
+```bash
+chmod +x import-environment.sh
+./import-environment.sh
+```
+
+> NOTE: if you're using Windows for development, you will need to manually create
+> any environment variables or write your own script to import `.env`
+
