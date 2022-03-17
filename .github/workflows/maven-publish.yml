@@ -65,13 +65,15 @@ jobs:
   dev:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     needs: build
-    uses: ./.github/workflows/deploy-to-environment.yml
-    with:
-      resource-group-base-name: 'my-sb-app'
-      environment-suffix: 'dev'
-      resource-group-location: 'eastus2'
-    secrets:
-      azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/workflows/deploy-to-environment.yml
+        with:
+          resource-group-base-name: 'my-sb-app'
+          environment-suffix: 'dev'
+          resource-group-location: 'eastus2'
+        secrets:
+          azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
   test:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
