@@ -14,6 +14,7 @@ on:
       - '**'
 
 env:
+  SHOULD_DEPLOY: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
   RESOURCE_GROUP_NAME: 'kyleburnsdev-springboot'
   RESOURCE_GROUP_LOCATION: 'eastus'
 
@@ -63,7 +64,7 @@ jobs:
         path: ./target/bicep/main.json
 
   dev:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -76,7 +77,7 @@ jobs:
           azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
   test:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     needs: dev
     uses: ./.github/workflows/deploy-to-environment.yml
     with:
@@ -87,7 +88,7 @@ jobs:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
   qa:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     needs: test
     uses: ./.github/workflows/deploy-to-environment.yml
     with:
