@@ -67,7 +67,7 @@ jobs:
     with:
       resource-group-base-name: '${{ env.RESOURCE_GROUP_NAME }}'
       environment-suffix: 'dev'
-      resource-group-location: '${{ env.RESOURCE_GROUP_LOCATION }}'
+      resource-group-location: 'eastus2'
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
@@ -78,7 +78,7 @@ jobs:
     with:
       resource-group-base-name: '${{ env.RESOURCE_GROUP_NAME }}'
       environment-suffix: 'test'
-      resource-group-location: '${{ env.RESOURCE_GROUP_LOCATION }}'
+      resource-group-location: 'eastus2'
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
@@ -89,7 +89,7 @@ jobs:
     with:
       resource-group-base-name: '${{ env.RESOURCE_GROUP_NAME }}'
       environment-suffix: 'qa'
-      resource-group-location: '${{ env.RESOURCE_GROUP_LOCATION }}'
+      resource-group-location: 'eastus2'
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
