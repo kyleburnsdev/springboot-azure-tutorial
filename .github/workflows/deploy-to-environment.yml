@@ -75,10 +75,6 @@ jobs:
                       --app ${{ steps.Infra.outputs.applicationInsightsApplicationId }} \
                       --query "apiKey" --output tsv)
           echo "::set-output name=aiKey::$result"
-    
-    - name: Consume AI Key For App Insights
-      run: |
-        echo ${{ steps.AIKeyGen.outputs.aiKey }}
 
     - name: Annotate deployment
       uses: wictorwilen/application-insights-action@v1
