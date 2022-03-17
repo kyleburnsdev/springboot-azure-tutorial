@@ -12,8 +12,8 @@ on:
       - '**'
 
 env:
-  RESOURCE_GROUP_NAME: 'kyleburnsdev-springboot'
-  RESOURCE_GROUP_LOCATION: 'eastus'
+  RESOURCE_GROUP_NAME: 'my-sb-app'
+  RESOURCE_GROUP_LOCATION: 'eastus2'
 
 jobs:
   build:
@@ -65,9 +65,9 @@ jobs:
     needs: build
     uses: ./.github/workflows/deploy-to-environment.yml
     with:
-      resource-group-base-name: 'my-sb-app'
+      resource-group-base-name: '${{ env.RESOURCE_GROUP_NAME }}'
       environment-suffix: 'dev'
-      resource-group-location: 'eastus2'
+      resource-group-location: '${{ env.RESOURCE_GROUP_LOCATION }}'
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
@@ -76,9 +76,9 @@ jobs:
     needs: dev
     uses: ./.github/workflows/deploy-to-environment.yml
     with:
-      resource-group-base-name: 'my-sb-app'
+      resource-group-base-name: '${{ env.RESOURCE_GROUP_NAME }}'
       environment-suffix: 'test'
-      resource-group-location: 'eastus2'
+      resource-group-location: '${{ env.RESOURCE_GROUP_LOCATION }}'
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
@@ -87,9 +87,9 @@ jobs:
     needs: test
     uses: ./.github/workflows/deploy-to-environment.yml
     with:
-      resource-group-base-name: 'my-sb-app'
+      resource-group-base-name: '${{ env.RESOURCE_GROUP_NAME }}'
       environment-suffix: 'qa'
-      resource-group-location: 'eastus2'
+      resource-group-location: '${{ env.RESOURCE_GROUP_LOCATION }}'
     secrets:
       azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
 
