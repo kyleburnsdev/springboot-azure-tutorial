@@ -20,7 +20,7 @@ jobs:
       packages: write
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up JDK 11
       uses: actions/setup-java@v2
       with:
@@ -45,13 +45,13 @@ jobs:
         bicep build src/main/az/main.bicep --outdir target/bicep
 
     - name: Publish App Artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: app
         path: ./target/app.jar
 
     - name: Publish Infra Artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: infra
         path: ./target/bicep/main.json
