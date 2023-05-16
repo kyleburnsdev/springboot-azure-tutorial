@@ -66,7 +66,7 @@ By setting the "parent" package for our project to the default Spring Boot start
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.1.0.RELEASE</version>
+    <version>3.0.6</version>
     <relativePath/>
   </parent>
 ```
@@ -118,7 +118,7 @@ With these changes in place, you should be able to use Maven to create an update
 
 ```bash
 mvn clean package
-java -jar target/app.jar
+mvn spring-boot:run
 ```
 
 The output will include a Spring Boot banner and if it reports success you will be able to navigate to <http://localhost:8080> where you will see a page marked "Whitelabel Error Page"
@@ -173,7 +173,7 @@ After adding the class, rebuild the application and go to <http://localhost:8080
 
 ```bash
 mvn clean package
-java -jar target/app.jar
+mvn spring-boot:run
 ```
 ## A Note About Deployment to Azure
 Building out Infrastructure as Code is worthy of a complete tutorial, but I don't want to pull you down that rabbit hole since it's likely to distract from the main topic of this learning journey. Throughout the journey, a [Bicep](https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/overview?tabs=bicep) template for provisioning infrastructure and [GitHub Action](https://docs.github.com/en/actions) workflow will be progressively built out to support what is happening in the application. The Bicep template can be found in the repo at `src/main/az/main.bicep` and the Github workflow at `.github/workflows/maven-publish.yml`.
