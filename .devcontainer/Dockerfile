@@ -1,9 +1,9 @@
-FROM mcr.microsoft.com/devcontainers/java:0-${templateOption:imageVariant}
+FROM mcr.microsoft.com/devcontainers/java:0-17
 
-ARG INSTALL_MAVEN="${templateOption:installMaven}"
+ARG INSTALL_MAVEN="true"
 ARG MAVEN_VERSION=""
 
-ARG INSTALL_GRADLE="${templateOption:installGradle}"
+ARG INSTALL_GRADLE="false"
 ARG GRADLE_VERSION=""
 
 RUN if [ "${INSTALL_MAVEN}" = "true" ]; then su vscode -c "umask 0002 && . /usr/local/sdkman/bin/sdkman-init.sh && sdk install maven \"${MAVEN_VERSION}\""; fi \
