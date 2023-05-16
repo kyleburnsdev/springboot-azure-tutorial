@@ -4,7 +4,10 @@
 	"name": "Java & PostgreSQL",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
-	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}"
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"containerEnv": {
+		"MY_SECRET_VALUE": "Secret in container environment"
+	}
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {}
