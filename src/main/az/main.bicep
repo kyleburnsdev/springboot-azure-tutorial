@@ -193,6 +193,7 @@ resource db 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' = {
         endIpAddress: '0.0.0.0'
     }
   }
+}
 
 output websiteName string = appService.name
 output websiteIdentity string = appService.identity.principalId
