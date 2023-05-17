@@ -11,6 +11,9 @@ var webSiteName = toLower('${webAppName}-web')
 var workspaceName = toLower('${webAppName}-law')
 var applicationInsightsName = toLower('${webAppName}-ai')
 var keyvaultName = toLower('${webAppName}-kv')
+var dbName = toLower('${webAppName}-psql')
+
+var dbHostName = '${dbName}.postgres.database.azure.com'
 
 resource workspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
   name: workspaceName
