@@ -266,6 +266,9 @@ To get our Azure environment set up requires exposing the `MY_SECRET_VALUE` envi
 Once the application setting is configured, navigate to the new `/secret` endpoint of your application and observe that the value of the environment variable is included in the message display.
 
 #### Key Vault
+
+> THE APPROACH DISCUSSED IN THIS SECTION HAS SINCE BEEN FOUND LESS ALIGNED TO RECOMMENDED APPROACH FOR SPRING BOOT APPS AND WILL BE REWORKED IN THE FUTURE TO USE THE AZURE KEYVAULT SPRING PROPERTY SOURCE
+
 For many applications, just keeping the secrets out of source control isn't enough. [Azure Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/general/overview) allows for complete management of secrets and certificates used by your application. The tutorial at <https://docs.microsoft.com/en-us/azure/key-vault/general/tutorial-net-create-vault-azure-web-app> shows how to set up a KeyVault, grant permission to the App Service to read secrets, and add Key Vault client code to a .NET Core application. This is a good exercise, but I strongly prefer an approach that doesn't include explicit Key Vault client code in the application because I favor an approach that leaves the consuming application unaware that Key Vault even exists. My preference to avoid explicit Key Vault code in the application is why the technique described in the [Use Key Vault references](https://docs.microsoft.com/en-us/azure/app-service/app-service-key-vault-references) how-to article was selected for this application.
 
 > NOTE: please use the above mentioned articles for details on how to create Key Vault and keys as well as how to appropriately set permissions
@@ -284,3 +287,62 @@ With the Key Vault reference set up, go back to the `/secret` endpoint of your a
 
 ## Checkpoint
 We have now together built a simple application that demonstrates all of the initial success criteria. Over time, this sample may evolve to take on additional success criteria as I need to gain additional depth in Spring Boot.
+
+## Relational Database Integration
+Most applications rely on some method of persisting data to be valuable. The first backing store we're going to look at integration with is PostgreSQL, which is one of the more ubiquitous relational databases found in the Java ecosystem and has a fully managed implementation in [Azure Database for PostgreSQL](https://learn.microsoft.com/en-us/azure/postgresql/). 
+
+### Update Dependencies
+
+```xml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-jdbc</artifactId>
+</dependency>
+```
+
+```xml
+<dependency>
+  <groupId>org.postgresql</groupId>
+  <artifactId>postgresql</artifactId>
+  <scope>runtime</scope>
+</dependency>
+```
+
+### Update Properties file
+
+```
+spring.datasource.url=jdbc:postgresql://${POSTGRES_HOSTNAME}:5432/${POSTGRES_DB}
+spring.datasource.username=${POSTGRES_USER}
+spring.datasource.password=${POSTGRES_PASSWORD}
+```
+
+### Add DbController
+
+```java
+package com.kyleburnsdev;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+@Controller
+@RequestMapping(path="/db")
+public class DbController {
+    @Autowired JdbcTemplate jdbcTemplate;
+
+    @GetMapping
+    public @ResponseBody String dbVersion() {
+        String sqlCommand = "SELECT version()";
+        String result = jdbcTemplate.queryForObject(sqlCommand, String.class);
+        return String.format("The detected database version is: %s", result);
+    }
+}
+```
+
+### Setting up the Azure environment
+
+### Next steps
+
+
+
