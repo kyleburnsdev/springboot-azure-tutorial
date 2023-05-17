@@ -83,6 +83,10 @@ resource symbolicname 'Microsoft.Web/sites/config@2021-03-01' = {
     ApplicationInsightsAgent_EXTENSION_VERSION: '~3'
     XDT_MicrosoftApplicationInsights_Java: '1'
     MY_SECRET_VALUE: '@Microsoft.KeyVault(VaultName=${keyvault.name};SecretName=mysecret)'
+    SPRING_PROFILES_ACTIVE: 'cloud'
+    POSTGRES_DB: 'postgres'
+    POSTGRES_HOSTNAME: dbHostName
+    POSTGRES_USER: webAppName
   }
 }
 
@@ -145,6 +149,43 @@ resource secret 'Microsoft.KeyVault/vaults/secrets@2021-11-01-preview' = {
     contentType: 'text/plain'
     value: 'replace me'
   }
+}
+
+resource db 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' = {
+  name: dbName
+  location: location
+  sku: {
+    name: 'Standard_B1ms'
+    tier: 'Burstable'
+  }
+  properties: {
+    createMode: 'Default'
+    version: '14'
+    administratorLogin: ''
+    administratorLoginPassword: null
+    network: null
+    availabilityZone: ''
+    storage: {
+      storageSizeGB: 32
+    }
+    dataEncryption: null
+    authConfig: {
+      activeDirectoryAuth: 'Enabled'
+      passwordAuth: 'Disabled'
+      tenantId: subscription().tenantId
+    }
+  }    
+}
+
+resource dbAdmin 'Microsoft.DBforPostgreSQL/flexibleServers/administrators@2022-12-01' = {
+  name: webAppName
+  parent: db
+  properties: {
+    principalName: webAppName
+    principalType: 'ServicePrincipal'
+    tenantId: subscription().tenantId
+  }
+  dependsOn: [ appService ]
 }
 
 output websiteName string = appService.name
