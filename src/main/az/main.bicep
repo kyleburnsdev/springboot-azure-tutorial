@@ -177,9 +177,9 @@ resource db 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' = {
   }  
 
   resource dbAdmin 'administrators' = {
-    name: 'postgreSqlAdmins'
+    name: 'appService-administrator'
     properties: {
-      principalName: '${webAppName}'
+      principalName: appService.identity.principalId
       principalType: 'ServicePrincipal'
       tenantId: subscription().tenantId
     }
