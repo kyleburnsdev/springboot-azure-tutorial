@@ -66,7 +66,7 @@ By setting the "parent" package for our project to the default Spring Boot start
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.1.0.RELEASE</version>
+    <version>3.0.6</version>
     <relativePath/>
   </parent>
 ```
@@ -118,7 +118,7 @@ With these changes in place, you should be able to use Maven to create an update
 
 ```bash
 mvn clean package
-java -jar target/app.jar
+mvn spring-boot:run
 ```
 
 The output will include a Spring Boot banner and if it reports success you will be able to navigate to <http://localhost:8080> where you will see a page marked "Whitelabel Error Page"
@@ -173,7 +173,7 @@ After adding the class, rebuild the application and go to <http://localhost:8080
 
 ```bash
 mvn clean package
-java -jar target/app.jar
+mvn spring-boot:run
 ```
 ## A Note About Deployment to Azure
 Building out Infrastructure as Code is worthy of a complete tutorial, but I don't want to pull you down that rabbit hole since it's likely to distract from the main topic of this learning journey. Throughout the journey, a [Bicep](https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/overview?tabs=bicep) template for provisioning infrastructure and [GitHub Action](https://docs.github.com/en/actions) workflow will be progressively built out to support what is happening in the application. The Bicep template can be found in the repo at `src/main/az/main.bicep` and the Github workflow at `.github/workflows/maven-publish.yml`.
@@ -195,7 +195,7 @@ With a tested and working application packaged into your JAR file, it's time to 
 - [App Service](https://docs.microsoft.com/en-us/azure/app-service/overview)
   - Connected to above App Service Plan
   - Code deployment (not container)
-  - Java 11 runtime stack
+  - Java 17 runtime stack
   - Healthcheck URL set to /actuator/health
 
 With the infrastructure deployed, the application can be deployed to the App Service using the following CLI command (replacing the bracketed values with your own):
@@ -266,6 +266,9 @@ To get our Azure environment set up requires exposing the `MY_SECRET_VALUE` envi
 Once the application setting is configured, navigate to the new `/secret` endpoint of your application and observe that the value of the environment variable is included in the message display.
 
 #### Key Vault
+
+> THE APPROACH DISCUSSED IN THIS SECTION HAS SINCE BEEN FOUND LESS ALIGNED TO RECOMMENDED APPROACH FOR SPRING BOOT APPS AND WILL BE REWORKED IN THE FUTURE TO USE THE AZURE KEYVAULT SPRING PROPERTY SOURCE
+
 For many applications, just keeping the secrets out of source control isn't enough. [Azure Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/general/overview) allows for complete management of secrets and certificates used by your application. The tutorial at <https://docs.microsoft.com/en-us/azure/key-vault/general/tutorial-net-create-vault-azure-web-app> shows how to set up a KeyVault, grant permission to the App Service to read secrets, and add Key Vault client code to a .NET Core application. This is a good exercise, but I strongly prefer an approach that doesn't include explicit Key Vault client code in the application because I favor an approach that leaves the consuming application unaware that Key Vault even exists. My preference to avoid explicit Key Vault code in the application is why the technique described in the [Use Key Vault references](https://docs.microsoft.com/en-us/azure/app-service/app-service-key-vault-references) how-to article was selected for this application.
 
 > NOTE: please use the above mentioned articles for details on how to create Key Vault and keys as well as how to appropriately set permissions
@@ -284,3 +287,69 @@ With the Key Vault reference set up, go back to the `/secret` endpoint of your a
 
 ## Checkpoint
 We have now together built a simple application that demonstrates all of the initial success criteria. Over time, this sample may evolve to take on additional success criteria as I need to gain additional depth in Spring Boot.
+
+## Relational Database Integration
+Most applications rely on some method of persisting data to be valuable. The first backing store we're going to look at integration with is PostgreSQL, which is one of the more ubiquitous relational databases found in the Java ecosystem and has a fully managed implementation in [Azure Database for PostgreSQL](https://learn.microsoft.com/en-us/azure/postgresql/). 
+
+### Update Dependencies
+
+```xml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-jdbc</artifactId>
+</dependency>
+```
+
+```xml
+<dependency>
+  <groupId>org.postgresql</groupId>
+  <artifactId>postgresql</artifactId>
+  <scope>runtime</scope>
+</dependency>
+```
+
+### Update Properties file
+
+```
+spring.datasource.url=jdbc:postgresql://${POSTGRES_HOSTNAME}:5432/${POSTGRES_DB}
+spring.datasource.username=${POSTGRES_USER}
+spring.datasource.azure.passwordless-enabled=true
+
+#---
+spring.config.activate.on-profile=local
+spring.datasource.azure.passwordless-enabled=false
+spring.datasource.password=${POSTGRES_PASSWORD}
+management.endpoint.health.show-details=always
+management.endpoint.health.show-components=always
+```
+
+### Add DbController
+
+```java
+package com.kyleburnsdev;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+@Controller
+@RequestMapping(path="/db")
+public class DbController {
+    @Autowired JdbcTemplate jdbcTemplate;
+
+    @GetMapping
+    public @ResponseBody String dbVersion() {
+        String sqlCommand = "SELECT version()";
+        String result = jdbcTemplate.queryForObject(sqlCommand, String.class);
+        return String.format("The detected database version is: %s", result);
+    }
+}
+```
+
+### Setting up the Azure environment
+
+### Next steps
+
+
+
