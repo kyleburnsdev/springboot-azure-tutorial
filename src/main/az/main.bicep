@@ -174,18 +174,25 @@ resource db 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' = {
       passwordAuth: 'Disabled'
       tenantId: subscription().tenantId
     }
-  }    
-}
+  }  
 
-resource dbAdmin 'Microsoft.DBforPostgreSQL/flexibleServers/administrators@2022-12-01' = {
-  name: webAppName
-  parent: db
-  properties: {
-    principalName: webAppName
-    principalType: 'ServicePrincipal'
-    tenantId: subscription().tenantId
+  resource dbAdmin 'administrators' = {
+    name: 'postgreSqlAdmins'
+    properties: {
+      principalName: '${webAppName}'
+      principalType: 'ServicePrincipal'
+      tenantId: subscription().tenantId
+    }
+    dependsOn: [ appService ]
   }
-  dependsOn: [ appService ]
+  
+  resource firewallAzure 'firewallRules' = {
+    name: 'allow-all-azure-internal-IPs'
+    properties: {
+        startIpAddress: '0.0.0.0'
+        endIpAddress: '0.0.0.0'
+    }
+  }
 }
 
 output websiteName string = appService.name
