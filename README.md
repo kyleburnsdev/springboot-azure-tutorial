@@ -195,7 +195,7 @@ With a tested and working application packaged into your JAR file, it's time to 
 - [App Service](https://docs.microsoft.com/en-us/azure/app-service/overview)
   - Connected to above App Service Plan
   - Code deployment (not container)
-  - Java 11 runtime stack
+  - Java 17 runtime stack
   - Healthcheck URL set to /actuator/health
 
 With the infrastructure deployed, the application can be deployed to the App Service using the following CLI command (replacing the bracketed values with your own):
