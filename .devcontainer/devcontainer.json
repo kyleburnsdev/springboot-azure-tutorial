@@ -8,6 +8,13 @@
 	"containerEnv": {
 		"MY_SECRET_VALUE": "Secret in container environment",
 		"SPRING_PROFILES_ACTIVE": "local"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"vscjava.vscode-java-pack"
+			]
+		}
 	}
 
 	// Features to add to the dev container. More info: https://containers.dev/features.

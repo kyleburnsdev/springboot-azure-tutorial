@@ -313,7 +313,14 @@ Most applications rely on some method of persisting data to be valuable. The fir
 ```
 spring.datasource.url=jdbc:postgresql://${POSTGRES_HOSTNAME}:5432/${POSTGRES_DB}
 spring.datasource.username=${POSTGRES_USER}
+spring.datasource.azure.passwordless-enabled=true
+
+#---
+spring.config.activate.on-profile=local
+spring.datasource.azure.passwordless-enabled=false
 spring.datasource.password=${POSTGRES_PASSWORD}
+management.endpoint.health.show-details=always
+management.endpoint.health.show-components=always
 ```
 
 ### Add DbController
