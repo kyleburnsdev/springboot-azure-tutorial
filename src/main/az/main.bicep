@@ -175,16 +175,6 @@ resource db 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' = {
       tenantId: subscription().tenantId
     }
   }  
-
-  resource dbAdmin 'administrators' = {
-    name: 'ActiveDirectory'
-    properties: {
-      principalName: appService.identity.principalId
-      principalType: 'ServicePrincipal'
-      tenantId: subscription().tenantId
-    }
-    dependsOn: [ appService ]
-  }
   
   resource firewallAzure 'firewallRules' = {
     name: 'allow-all-azure-internal-IPs'
@@ -197,6 +187,7 @@ resource db 'Microsoft.DBforPostgreSQL/flexibleServers@2022-12-01' = {
 
 output websiteName string = appService.name
 output websiteIdentity string = appService.identity.principalId
+output postgreSqlResourceName string = db.name
 output applicationInsightsApplicationId string = applicationInsights.properties.ApplicationId
 output applicationInsightsApiAppId string = applicationInsights.properties.AppId
 output releaseAnnotationId string = releaseAnnotationGuid
