@@ -15,7 +15,8 @@
 				"vscjava.vscode-java-pack",
 				"ms-azuretools.vscode-bicep",
 				"github.vscode-github-actions",
-				"ms-azuretools.vscode-docker"
+				"ms-azuretools.vscode-docker",
+				"redhat.fabric8-analytics"
 			]
 		}
 	}
