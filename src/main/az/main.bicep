@@ -86,7 +86,7 @@ resource symbolicname 'Microsoft.Web/sites/config@2021-03-01' = {
     SPRING_PROFILES_ACTIVE: 'cloud'
     POSTGRES_DB: 'postgres'
     POSTGRES_HOSTNAME: dbHostName
-    POSTGRES_USER: webAppName
+    POSTGRES_USER: webSiteName
   }
 }
 
