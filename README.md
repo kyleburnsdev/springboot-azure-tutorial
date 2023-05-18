@@ -291,7 +291,26 @@ We have now together built a simple application that demonstrates all of the ini
 ## Relational Database Integration
 Most applications rely on some method of persisting data to be valuable. The first backing store we're going to look at integration with is PostgreSQL, which is one of the more ubiquitous relational databases found in the Java ecosystem and has a fully managed implementation in [Azure Database for PostgreSQL](https://learn.microsoft.com/en-us/azure/postgresql/). 
 
+### Update environment
+Your local environment is going to need some variables added to connect to your PostgreSQL database. In the example `.env` file, the following entries show the new variables that will be used in this integration:
+
+```
+SPRING_PROFILES_ACTIVE="local"
+POSTGRES_PASSWORD="postgres"
+POSTGRES_USER="postgres"
+POSTGRES_DB="postgres"
+POSTGRES_HOSTNAME="postgresdb"
+```
+
+The names of the variables make them fairly self-explanatory, but it's important to know that these need to describe information that will successfully connect to a PostgreSQL database that your development machine has access to. If you're using VS Code or Github Codespaces, this repo is set up with a multi-container [devcontainer](https://code.visualstudio.com/docs/devcontainers/containers) configuration that includes a PostgreSQL database that is only exposed to the developer's isolated workspace. If you're using another IDE, you may still want to consider making using of the database container used here to allow yourself a completely isolated inner loop experience with a blast radius of 1.
+
 ### Update Dependencies
+This section describes changes made to dependencies to support the integration. I've divided these changes into changes that would be needed to integrate PostgreSQL into any Spring Boot application and those that are needed to unlock additional benefits gained by using Azure Database for PostgreSQL.
+
+#### Foundational changes to integrate PostgreSQL
+The first dependency that we need to add is Spring Boot's starter for JDBC. This brings classes and interfaces to support interacting with "any JDBC datasource", meaning that developers do not necessarily need to worry about which specific database will be used, but instead can interact more generically with the database. For our project, we will directly use a class from this framework called `JdbcTemplate` and Spring Boot framework itself will use other classes in the framework to construct a `JdbcTemplate` instance for our use.
+
+> NOTE: when using this framework to issue direct SQL statements as done in the sample project, the specific DBMS implementation may become important to the SQL dialect you use
 
 ```xml
 <dependency>
@@ -299,6 +318,8 @@ Most applications rely on some method of persisting data to be valuable. The fir
   <artifactId>spring-boot-starter-jdbc</artifactId>
 </dependency>
 ```
+
+We also need to ensure that a PostgreSQL client is available, so the PostgreSQL client package is included
 
 ```xml
 <dependency>
@@ -308,7 +329,38 @@ Most applications rely on some method of persisting data to be valuable. The fir
 </dependency>
 ```
 
+#### Changes specific to benefit from Managed Identity support in Azure Database for PostgreSQL
+With the dependencies added in the previous section, the application now supports interacting with and PostgreSQL database *including Azure Database for PostgreSQL*. When we think back to the principals guiding this project, though, we accepted a guiding principal requiring secrets to be protected. When we integrated KeyVault, we configured [System Assigned Managed Identity](https://docs.microsoft.com/en-us/azure/app-service/overview-managed-identity?tabs=portal%2Chttp#add-a-system-assigned-identity) for the web application so that we could assign it priviliges to read KeyVault. For this scenario, we will [add the website managed identity as an administrator on PostgreSQL](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/how-to-manage-azure-ad-users#create-or-delete-azure-ad-administrators-using-azure-portal-or-azure-resource-manager-arm-api).
+
+>WARNING: For the sake of keeping the sample simple I have added as an administrator, but in real world application you would want to add the managed identity to the database as a user with less privilege
+
+Because Azure is now managing the identity being used to connect to the database, no human will ever know the password and you won't be able to connect to the database using a username/password combination. This is where additional Azure-specific dependencies are introduced to accomplish passwordless login to the database using the managed identity.
+
+```xml
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>com.azure.spring</groupId>
+      <artifactId>spring-cloud-azure-dependencies</artifactId>
+      <version>5.1.0</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+```
+
+```xml
+<dependency>
+  <groupId>com.azure.spring</groupId>
+  <artifactId>spring-cloud-azure-starter-jdbc-postgresql</artifactId>
+</dependency>
+```
+
 ### Update Properties file
+In this sample, I am taking a preference to develop against a local, isolated, PostgreSQL database and use Managed Identity to connect to PostgreSQL instances in Azure. Based on that, I want different configurations to be active depending on whether the code is running locally or deployed. I set my Spring Profile to "local" and am considering everything else to be "cloud". In the `application.properties` file, I set the defaults that should either be applicable everywhere (db host and user) or just in non-local deployments (passwordless) and then provide local-specific settings over the top of those.
+
+> NOTE: for local development, I am showing detailed output from Actuator health checks that I would not want to share with potential attackers when deployed into Azure
 
 ```
 spring.datasource.url=jdbc:postgresql://${POSTGRES_HOSTNAME}:5432/${POSTGRES_DB}
@@ -324,6 +376,8 @@ management.endpoint.health.show-components=always
 ```
 
 ### Add DbController
+
+Finally, we add a controller to demonstrate that we're able to connect to and query the database. This controller simply executes a SQL command that returns a scalar result (the string container version information of the database server) and returns the result to the client.
 
 ```java
 package com.kyleburnsdev;
@@ -346,6 +400,10 @@ public class DbController {
     }
 }
 ```
+
+After adding the class, rebuild the application and go to <http://localhost:8080/db>. You should see the database version information displayed in the message.
+
+The real magic becomes evident when you go to <http://localhost:8080/actuator/health>. Notice that Actuator has picked up that you are using a Spring datasource and automatically added ensuring that connectivity is in place as part of the health check without you having to do anything, helping to ensure that "healthy" from an application perspective means more than just that the container is running and able to respond to HTTP requests!
 
 ### Setting up the Azure environment
 
