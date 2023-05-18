@@ -61,7 +61,11 @@ jobs:
       uses: azure/CLI@v1
       with:
         inlineScript: |
-          az postgres flexible-server ad-admin create --server-name ${{ steps.Infra.outputs.postgreSqlResourceName }} -g ${{ env.RESOURCE_GROUP_NAME }} --display-name ${{ steps.Infra.outputs.websiteName }} --object-id ${{ steps.Infra.outputs.websiteIdentity }}
+          az postgres flexible-server ad-admin create --server-name ${{ steps.Infra.outputs.postgreSqlResourceName }} \
+                      -g ${{ env.RESOURCE_GROUP_NAME }} \
+                      --display-name ${{ steps.Infra.outputs.websiteName }} \
+                      --object-id ${{ steps.Infra.outputs.websiteIdentity }} \
+                      -t ServicePrincipal
 
     - name: App
       uses: azure/webapps-deploy@v2
