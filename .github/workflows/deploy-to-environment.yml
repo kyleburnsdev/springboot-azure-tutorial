@@ -58,7 +58,7 @@ jobs:
 
     - name: DbAdmin
       id: DbAdmin
-      uses: azure/CLI@v3
+      uses: azure/CLI@v1
       with:
         inlineScript: |
           az postgres server ad-admin create --server-name ${{ steps.Infra.outputs.postgreSqlResourceName }} -g ${{ env.RESOURCE_GROUP_NAME }} --display-name ${{ steps.Infra.outputs.websiteName }} --object-id ${{ steps.Infra.outputs.websiteIdentity }}
