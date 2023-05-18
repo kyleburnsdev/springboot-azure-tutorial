@@ -56,6 +56,13 @@ jobs:
         resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
         template: ./infra/main.json
 
+    - name: DbAdmin
+      id: DbAdmin
+      uses: azure/CLI@v3
+      with:
+        inlineScript: |
+          az postgres server ad-admin create --server-name ${{ steps.Infra.outputs.postgreSqlResourceName }} -g ${{ env.RESOURCE_GROUP_NAME }} --display-name ${{ steps.Infra.outputs.websiteName }} --object-id ${{ steps.Infra.outputs.websiteIdentity }}
+
     - name: App
       uses: azure/webapps-deploy@v2
       with:
