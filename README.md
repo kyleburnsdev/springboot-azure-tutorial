@@ -406,8 +406,43 @@ After adding the class, rebuild the application and go to <http://localhost:8080
 The real magic becomes evident when you go to <http://localhost:8080/actuator/health>. Notice that Actuator has picked up that you are using a Spring datasource and automatically added ensuring that connectivity is in place as part of the health check without you having to do anything, helping to ensure that "healthy" from an application perspective means more than just that the container is running and able to respond to HTTP requests!
 
 ### Setting up the Azure environment
+If you are using the Azure portal instead of the Bicep template available in this repo, the following additions or updates need to be made to your Azure environment
 
-### Next steps
+#### Database creation
+Add your database resource using the following guide for selection during the creation process:
 
+> NOTE: Currently the deprecated Azure Database for PostgreSQL - Single Server is still available. You should use Flexible Server instead
+
+- [Azure Database for PostgreSQL - Flexible Server](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/overview)
+  - Basics
+    - Latest non-preview PostgreSQL version (14 as of this writing)
+    - Development workload type will incur least cost
+    - Availability zone is not necessary for this sample
+    - High availability is not necessary for this sample
+    - Authentication method should be either "Azure Active Directory Authentication Only" or "PostgreSQL and Azure Active Directory Authentication"
+  - Set admin to the Managed Identity of the Web App
+  - Networking
+    - Connectivity method "Public Access"
+    - Firewall rules select "Allow public access from any Azure service..."
+    - (optional) Add any additional IP(s) you want to access the database
+  - Security
+    - Use Service-managed encryption key
+  - Tags
+    - No tags are necessary
+
+Once the resource is created, go to the Overview blade of the database resource and make note of the *Server name* property. You will need this fully qualified host name when updating your App Service configuration
+
+#### App Service update
+In the *Configuration* blade of your App Service, add the following Application settings:
+
+| Setting Name | Setting Value |
+------------ | --------------
+| POSTGRES_HOSTNAME | Set to fully qualified host name of your PostgreSQL instance |
+| POSTGRES_DB | Set to `postgres` |
+| POSTGRES_USER | Set to name of the App Service |
+| (optional) SPRING_PROFILES_ACTIVE | Set to any value other than `local`. I used `cloud` |
+
+### Deploy and validate
+With the changes made to your Azure environment redeploy the application and navigate to your `/db` endpoint. You should see a response that contains version information of your database
 
 
