@@ -445,4 +445,19 @@ In the *Configuration* blade of your App Service, add the following Application 
 ### Deploy and validate
 With the changes made to your Azure environment redeploy the application and navigate to your `/db` endpoint. You should see a response that contains version information of your database
 
+## Checkpoint
+At this point, we've added database integration to the simple application. Let's see how we did against our original success criteria.
+
+- [x] The resulting application may be simple, but should be something that can evolve into a reasonable enterprise solution
+  - Libraries added were production-grade and in common use within enterprise solutions
+  - Code patterns follow common patterns used in production software
+- [x] Application should be deployable to Azure App Service
+- [x] Keep as few moving parts as is practical
+  - The only Azure resource added was a database, which was vital to the goal
+- [x] Account for how the application will be monitored operationally
+  - Actuator will automatically include verifying the added datasource
+- [x] Do not store secrets in source files
+  - Because we're using Managed Identity to access the database, no additional secrets were needed to be deployed
+  - Secrets for local development were not required to be added to source control. If using the devcontainer in this repo, there is *technically* a database password in source control, but it is for a transient database server that is only accessible from the local machine and does not represent significant risk
+
 
