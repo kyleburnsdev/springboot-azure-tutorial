@@ -15,6 +15,8 @@ services:
         POSTGRES_USER: postgres
         POSTGRES_DB: postgres
         POSTGRES_HOSTNAME: postgresdb
+        REDIS_HOSTNAME: redis
+        REDIS_PORT: 6379
 
     volumes:
       - ../..:/workspaces:cached
@@ -42,3 +44,9 @@ services:
 
     # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
+    
+  cache:
+    container_name: redis
+    image: redis:6.2.12
+    restart: unless-stopped
+    network_mode: service:db
