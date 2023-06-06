@@ -12,8 +12,10 @@ var workspaceName = toLower('${webAppName}-law')
 var applicationInsightsName = toLower('${webAppName}-ai')
 var keyvaultName = toLower('${webAppName}-kv')
 var dbName = toLower('${webAppName}-psql')
+var cacheName = toLower('${webAppName}-cache')
 
 var dbHostName = '${dbName}.postgres.database.azure.com'
+var cacheHostName = '${cacheName}.redis.cache.windows.net'
 
 resource workspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
   name: workspaceName
@@ -87,6 +89,9 @@ resource symbolicname 'Microsoft.Web/sites/config@2021-03-01' = {
     POSTGRES_DB: 'postgres'
     POSTGRES_HOSTNAME: dbHostName
     POSTGRES_USER: webSiteName
+    REDIS_HOSTNAME: cacheHostName
+    REDIS_PORT: 6379
+    REDIS_PASSWORD: '@Microsoft.KeyVault(VaultName=${keyvault.name};SecretName=redisPassword)'
   }
 }
 
@@ -148,6 +153,27 @@ resource secret 'Microsoft.KeyVault/vaults/secrets@2021-11-01-preview' = {
   properties: {
     contentType: 'text/plain'
     value: 'replace me'
+  }
+}
+
+resource redisPassSecret 'Microsoft.KeyVault/vaults/secrets@2021-11-01-preview' = {
+  name: 'redisPassword'
+  parent: keyvault
+  properties: {
+    contentType: 'text/plain'
+    value: cache.listKeys().primaryKey
+  }
+}
+
+resource cache 'Microsoft.Cache/redis@2022-06-01' = {
+  name: cacheName
+  location: location
+  properties: {
+    sku: {
+      name: 'Basic'
+      family: 'C'
+      capacity: 1
+    }
   }
 }
 
