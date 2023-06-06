@@ -90,7 +90,7 @@ resource symbolicname 'Microsoft.Web/sites/config@2021-03-01' = {
     POSTGRES_HOSTNAME: dbHostName
     POSTGRES_USER: webSiteName
     REDIS_HOSTNAME: cacheHostName
-    REDIS_PORT: 6379
+    REDIS_PORT: '6379'
     REDIS_PASSWORD: '@Microsoft.KeyVault(VaultName=${keyvault.name};SecretName=redisPassword)'
   }
 }
