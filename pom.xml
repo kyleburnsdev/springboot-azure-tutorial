@@ -26,7 +26,17 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-redis</artifactId>
+      <exclusions>
+        <exclusion>
+            <artifactId>lettuce-core</artifactId>
+            <groupId>io.lettuce</groupId>
+        </exclusion>
+      </exclusions>      
     </dependency>
+    <dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+		</dependency>    
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
