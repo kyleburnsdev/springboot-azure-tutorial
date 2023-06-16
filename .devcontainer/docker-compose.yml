@@ -48,7 +48,7 @@ services:
     
   cache:
     container_name: redis
-    image: redis:6.2.12
+    image: redis:6.2.12-alpine
     restart: unless-stopped
     network_mode: service:db
     environment:
